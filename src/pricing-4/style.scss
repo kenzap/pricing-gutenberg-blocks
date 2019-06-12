@@ -21,8 +21,9 @@
 
 .kenzap .kenzap-pricing-4 .kenzap-container{
   max-width:1170px;
-  padding:0 15px;
+  padding:0 var(--paddings2,0);
   margin:0 auto;
+  overflow-x: hidden;
 }
 
 .kenzap .kenzap-pricing-4.autoPadding {
@@ -51,12 +52,12 @@
   padding:80px 0 50px;
 }
 
-.kenzap .kenzap-pricing-4 .kp-pricing-table h2{
-  font-size: calc(26px + (45 - 26) * ((100vw - 300px) / (1600 - 300)));
-  line-height: calc(41px + (60 - 41) * ((100vw - 300px) / (1600 - 300)));
-  color:#000;
-  font-weight:600
-}
+// .kenzap .kenzap-pricing-4 .kp-pricing-table h2{
+//   font-size: calc(26px + (45 - 26) * ((100vw - 300px) / (1600 - 300)));
+//   line-height: calc(41px + (60 - 41) * ((100vw - 300px) / (1600 - 300)));
+//   color:#000;
+//   font-weight:600
+// }
 
 .kenzap .kenzap-pricing-4 .kp-pricing-table h2 .organization{
   display:block;
@@ -64,7 +65,6 @@
   font-size:18px;
   line-height:1;
   font-weight: 400;
-  text-transform: uppercase;
   color: rgba(0,0,0,0.35);
   letter-spacing: 1px;
   margin-bottom: 22px;
@@ -105,17 +105,20 @@
 }
 
 .kenzap .kenzap-pricing-4 .tabs-nav ul li:first-child a{
-  border-radius: var(--buttonBorderRadius, 28px) 0 0 var(--buttonBorderRadius, 28px); 
+  border-top-right-radius: 0px!important;
+  border-bottom-right-radius: 0px!important;
 }
 
 .kenzap .kenzap-pricing-4 .tabs-nav ul li:last-child a{
-  border-radius: 0 var(--buttonBorderRadius, 28px) var(--buttonBorderRadius, 28px) 0;
+  border-top-left-radius: 0px!important;
+  border-bottom-left-radius: 0px!important;
 }
 
 .kenzap .kenzap-pricing-4 .tabs-nav ul li.active a{
-  background: linear-gradient( 41deg, rgb(06,92,237) 0%, rgb(200,26,220) 100%);
-  background: var(--gradientColor);
-  color:#fff
+  //background: linear-gradient( 41deg, rgb(06,92,237) 0%, rgb(200,26,220) 100%);
+  background: var(--hbacl, #ffffff)!important;
+  color:var(--hcl, #333333)!important;
+  border-color:var(--hbrcl, #333333)!important;
 }
 
 .kenzap .kenzap-pricing-4 .tabs-content{
@@ -159,7 +162,6 @@
   font-size: 18px;
   font-weight: 600;
   line-height: 1.1;
-  text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 4px;
 }
@@ -217,10 +219,9 @@
   line-height: 41px;
   border: 2px solid rgba(0,0,0,0.05);
   border-radius: 23px;
-  text-transform: uppercase;
   font-size: 15px;
   font-weight: 600;
-  color: #00000a;
+  color: #000000;
   letter-spacing: 1px;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
@@ -234,8 +235,9 @@
 }
 
 .kenzap .kenzap-pricing-4 .pricing-box .kp-link:hover{
-  color: #fff;
-  border-color:#fff;
+  color: var(--hcl,#fff)!important;
+  border-color:var(--hbrcl,#333333)!important;
+  background: var(--hbacl,#333333)!important;
 }
 
 .kenzap .kenzap-pricing-4 .pricing-box .kp-link:before{
@@ -317,7 +319,9 @@
     transform: scale(1) translateX(0);
   }
 
-
+  .kenzap .kenzap-pricing-4 .kp-pricing-table h2 span{
+    font-size:var(--fst,45px)!important;
+  }
 }
 
 
@@ -377,6 +381,10 @@
   .kenzap .kenzap-pricing-4.kenzap-md .tab-content,
   .kenzap .kenzap-pricing-4.kenzap-sm .tab-content{
     width:100%;
+  }
+
+  .kenzap .kenzap-pricing-4 .kp-pricing-table h2 span{
+    font-size:var(--fsm,30px)!important;
   }
 
 }

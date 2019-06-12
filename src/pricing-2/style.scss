@@ -21,8 +21,9 @@
 
 .kenzap .kenzap-pricing-2 .kenzap-container{
   max-width:1170px;
-  padding:0 15px;
+  padding:0 var(--paddings2,0);
   margin:0 auto;
+  overflow-x: hidden;
 }
 
 .kenzap .kenzap-pricing-2.autoPadding {
@@ -45,7 +46,7 @@
 }
 
 .kenzap .kenzap-pricing-2 .pricing-box{
-  padding:95px 50px;
+  padding:50px 50px;
 }
 
 .kenzap .kenzap-pricing-2 .kp-pricing-table > div > div:nth-child(odd) > .pricing-box{
@@ -98,7 +99,7 @@
 .kenzap .kenzap-pricing-2 .pricing-box ul li{
   font-size: inherit;
   color: inherit;
-  font-weight:300;
+  //font-weight:300;
   display: block;
   line-height:inherit;
   vertical-align: middle;

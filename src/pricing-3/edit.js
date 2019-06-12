@@ -1,12 +1,11 @@
 
-const { __ } = wp.i18n; // Import __() from wp.i18n
+const { __ } = wp.i18n; 
 const { Component } = wp.element;
-const { RichText, InspectorControls, PanelColorSettings, MediaUpload } = wp.editor;
+const { RichText, InspectorControls, PanelColorSettings, MediaUpload, InnerBlocks } = wp.editor;
 const { RangeControl, PanelBody, Popover, TextControl, ToggleControl, Button, ButtonGroup, BaseControl, CheckboxControl } = wp.components;
-
-import { defaultItem, getStyles } from './block';
-
+import { defaultItem, getStyles, typographyArr } from './block';
 import { InspectorContainer, ContainerEdit } from '../commonComponents/container/container';
+import { TypographyContainer, getTypography } from '../commonComponents/typography/typography';
 import { Plus } from '../commonComponents/icons/plus';
 
 /**
@@ -125,11 +124,12 @@ export default class Edit extends Component {
                                 placeholder={ __( 'Title', 'kenzap-pricing' ) }
                                 value={ item.title }
                                 onChange={ ( value ) => this.onChangePropertyItem( 'title', value, index, itemsType ) }
-                                style={ {
-                                    color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.textColor,
-                                    fontSize: `${ attributes.titleSize }px`,
-                                    lineHeight: `${ attributes.titleSize * 1.17 }px`,
-                                } }
+                                // style={ {
+                                //     color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.textColor,
+                                //     fontSize: `${ attributes.titleSize }px`,
+                                //     lineHeight: `${ attributes.titleSize * 1.17 }px`,
+                                // } }
+                                style={ { ...getTypography( attributes, 1 ), color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.textColor,} }
                             />
                             <MediaUpload
                                 onSelect={ ( media ) => {
@@ -163,10 +163,11 @@ export default class Edit extends Component {
                                             this.onChangePropertyItem( 'currency', value, index, itemsType );
                                         } }
                                         placeholder={ __( '$', 'kenzap-pricing' ) }
-                                        style={ {
-                                            width: `${ ( item.currency.length === 0 ? 1 : item.currency.length ) * 20 }px`,
-                                            color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor,
-                                        } }
+                                        // style={ {
+                                        //     width: `${ ( item.currency.length === 0 ? 1 : item.currency.length ) * 20 }px`,
+                                        //     color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor,
+                                        // } }
+                                        style={ { ...getTypography( attributes, 2 ), color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor, width: `${ ( item.currency.length === 0 ? 1 : item.currency.length ) * 20 }px` } }    
                                     />
                                 </sup>
                                 <input
@@ -176,10 +177,11 @@ export default class Edit extends Component {
                                         this.onChangePropertyItem( 'price', value, index, itemsType );
                                     } }
                                     placeholder={ __( '19.99', 'kenzap-pricing' ) }
-                                    style={ {
-                                        width: `${ ( item.price.length === 0 ? 5 : item.price.length ) * 25 }px`,
-                                        color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor,
-                                    } }
+                                    // style={ {
+                                    //     width: `${ ( item.price.length === 0 ? 5 : item.price.length ) * 25 }px`,
+                                    //     color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor,
+                                    // } }
+                                    style={ { ...getTypography( attributes, 3 ), width: `${ ( item.price.length === 0 ? 5 : item.price.length ) * 27 }px`, color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor,}}
                                 />
                                 <sub>/
                                     <input
@@ -189,10 +191,11 @@ export default class Edit extends Component {
                                             this.onChangePropertyItem( 'period', value, index, itemsType );
                                         } }
                                         placeholder={ __( 'mo', 'kenzap-pricing' ) }
-                                        style={ {
-                                            width: `${ ( item.period.length === 0 ? 3 : item.period.length + 1 ) * 10.5 }px`,
-                                            color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor,
-                                        } }
+                                        // style={ {
+                                        //     width: `${ ( item.period.length === 0 ? 3 : item.period.length + 1 ) * 10.5 }px`,
+                                        //     color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor,
+                                        // } }
+                                        style={ { ...getTypography( attributes, 4 ), width: `${ ( item.period.length === 0 ? 3 : item.period.length + 1 ) * 14.5 }px`, color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor, } }
                                     />
                                 </sub>
                             </strong>
@@ -202,18 +205,21 @@ export default class Edit extends Component {
                                 value={ item.subDescription }
                                 onChange={ ( value ) => this.onChangePropertyItem( 'subDescription', value, index, itemsType ) }
                                 multiline="li"
-                                style={ {
-                                    color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.textColor,
-                                    fontSize: `${ attributes.listDescriptionSize }px`,
-                                } }
+                                style={ { ...getTypography( attributes, 5 ), color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.textColor, } }
+                                // style={ {
+                                //     color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.textColor,
+                                //     fontSize: `${ attributes.listDescriptionSize }px`,
+                                // } }
                             />
                             <a
                                 onClick={ () => this.setState( { isButtonPopupVisibleIndex: item.key } ) }
-                                style={ {
-                                    background: bestSellerBlock === index + 1 ? '#fff' : attributes.blueColor,
-                                    borderRadius: attributes.buttonBorderRadius,
-                                } }
+                                // style={ {
+                                //     background: bestSellerBlock === index + 1 ? '#fff' : attributes.blueColor,
+                                //     borderRadius: attributes.buttonBorderRadius,
+                                // } }
+                                style={ { ...getTypography( attributes, 6 ), background: bestSellerBlock === index + 1 ? '#fff' : attributes.blueColor, borderRadius: attributes.buttonBorderRadius, } }
                                 className="kp-link"
+                                rel="noopener noreferrer"
                             >
                                 <input
                                     value={ item.buttonText }
@@ -267,9 +273,9 @@ export default class Edit extends Component {
                         initialOpen={ false }
                     >
                         <CheckboxControl
-                            label={ __( 'Show the table type selector', 'kenzap-pricing' ) }
+                            label={ __( 'Tabs', 'kenzap-pricing' ) }
                             checked={ attributes.isFilterShow }
-                            help={ __( 'Will be shown only individual price type', 'kenzap-pricing' ) }
+                            //help={ __( 'Will be shown only individual price type', 'kenzap-pricing' ) }
                             onChange={ ( isFilterShow ) => {
                                 setAttributes( { isFilterShow } );
                                 this.setState( { itemsType: 'items' } );
@@ -277,7 +283,7 @@ export default class Edit extends Component {
                         />
                         { attributes.isFilterShow &&
                             <BaseControl
-                                label={ __( 'Table type', 'kenzap-pricing' ) }
+                                label={ __( 'Current tab', 'kenzap-pricing' ) }
                             >
                                 <ButtonGroup>
                                     <Button
@@ -298,13 +304,13 @@ export default class Edit extends Component {
                             </BaseControl>
                         }
 
-                        <RangeControl
+                        {/* <RangeControl
                             label={ __( 'Title Size', 'kenzap-pricing' ) }
                             value={ attributes.titleSize }
                             onChange={ ( titleSize ) => setAttributes( { titleSize } ) }
                             min={ 10 }
                             max={ 130 }
-                        />
+                        /> */}
                         <RangeControl
                             label={ __( 'Icon Size', 'kenzap-pricing' ) }
                             value={ attributes.iconSize }
@@ -312,22 +318,22 @@ export default class Edit extends Component {
                             min={ 0 }
                             max={ 200 }
                         />
-                        <RangeControl
+                        {/* <RangeControl
                             label={ __( 'Description Size', 'kenzap-pricing' ) }
                             value={ attributes.listDescriptionSize }
                             onChange={ ( listDescriptionSize ) => setAttributes( { listDescriptionSize } ) }
                             min={ 10 }
                             max={ 130 }
-                        />
+                        /> */}
                         <RangeControl
-                            label={ __( 'First Featured Table', 'kenzap-pricing' ) }
+                            label={ __( 'Featured table (1 tab)', 'kenzap-pricing' ) }
                             value={ attributes.bestSellerBlock }
                             onChange={ ( bestSellerBlock ) => setAttributes( { bestSellerBlock } ) }
                             min={ 1 }
                             max={ attributes.items.length }
                         />
                         <RangeControl
-                            label={ __( 'Second Featured Table', 'kenzap-pricing' ) }
+                            label={ __( 'Featured table (2 tab)', 'kenzap-pricing' ) }
                             value={ attributes.bestSellerBusinessBlock }
                             onChange={ ( bestSellerBusinessBlock ) => setAttributes( { bestSellerBusinessBlock } ) }
                             min={ 1 }
@@ -335,14 +341,14 @@ export default class Edit extends Component {
                         />
 
                         <RangeControl
-                            label={ __( 'Table Border', 'kenzap-pricing' ) }
+                            label={ __( 'Table radius', 'kenzap-pricing' ) }
                             value={ attributes.cardBorderRadius }
                             onChange={ ( cardBorderRadius ) => setAttributes( { cardBorderRadius } ) }
                             min={ 0 }
                             max={ 100 }
                         />
                         <RangeControl
-                            label={ __( 'Button Border', 'kenzap-pricing' ) }
+                            label={ __( 'Button radius', 'kenzap-pricing' ) }
                             value={ attributes.buttonBorderRadius }
                             onChange={ ( buttonBorderRadius ) => setAttributes( { buttonBorderRadius } ) }
                             min={ 0 }
@@ -359,24 +365,30 @@ export default class Edit extends Component {
                                     onChange: ( value ) => {
                                         return setAttributes( { textColor: value } );
                                     },
-                                    label: __( 'Text', 'kenzap-pricing' ),
+                                    label: __( 'Color 1', 'kenzap-pricing' ),
                                 },
                                 {
                                     value: attributes.textColorBestSeller,
                                     onChange: ( value ) => {
                                         return setAttributes( { textColorBestSeller: value } );
                                     },
-                                    label: __( 'Featured Text', 'kenzap-pricing' ),
+                                    label: __( 'Color 2', 'kenzap-pricing' ),
                                 },
                                 {
                                     value: attributes.blueColor,
                                     onChange: ( blueColor ) => {
                                         return setAttributes( { blueColor } );
                                     },
-                                    label: __( 'Blue color', 'kenzap-pricing' ),
+                                    label: __( 'Color 3', 'kenzap-pricing' ),
                                 },
                             ] }
                         />
+
+                    <TypographyContainer
+                        setAttributes={ setAttributes }
+                        typographyArr={ typographyArr }
+                        { ...attributes }
+                    />
 
                     <InspectorContainer
                         setAttributes={ setAttributes }
@@ -385,16 +397,18 @@ export default class Edit extends Component {
                         withWidth100
                         withBackground
                         withAutoPadding
+                        withNested
                     />
                 </InspectorControls>
                 <div className={ className ? className : '' } style={ vars }>
                     <ContainerEdit
-                        className={ `kenzap-pricing-3 block-${ attributes.blockUniqId } ${ isSelected ? 'selected' : '' } kenzap-xs ` }
+                        className={ `kenzap-pricing-3 block-${ attributes.blockUniqId } ${ isSelected ? 'selected' : '' } ` }
                         attributes={ attributes }
                         withBackground
                         withPadding
                     >
                         <div className="kenzap-container" style={ kenzapContanerStyles }>
+                            { attributes.nestedBlocks == 'top' && <InnerBlocks /> }
                             <div className="kp-pricing-table">
                                 { attributes.isFilterShow &&
                                     <div className="tabs-nav" style={ { background: attributes.blueColor } }>
@@ -403,6 +417,7 @@ export default class Edit extends Component {
                                                 <a
                                                     href="#"
                                                     style={ {
+                                                        ...getTypography( attributes, 0 ),
                                                         color: this.state.itemsType === 'items' ? attributes.blueColor : attributes.textColorBestSeller,
                                                         background: this.state.itemsType === 'items' ? attributes.textColorBestSeller : attributes.blueColor,
                                                     } }
@@ -415,8 +430,9 @@ export default class Edit extends Component {
                                                             items.individual = value;
                                                             setAttributes( { tableTypes: items } );
                                                         } }
-                                                        placeholder={ __( 'Table type', 'kenzap-pricing' ) }
-                                                        style={ {
+                                                        placeholder={ __( 'Tab title', 'kenzap-pricing' ) }
+                                                        style={ { 
+                                                            
                                                             color: this.state.itemsType === 'items' ? attributes.blueColor : attributes.textColorBestSeller,
                                                             background: this.state.itemsType === 'items' ? attributes.textColorBestSeller : attributes.blueColor,
                                                             width: ( attributes.tableTypes.individual.length === 0 ? 10 : attributes.tableTypes.individual.length ) * 10,
@@ -428,6 +444,7 @@ export default class Edit extends Component {
                                                 <a
                                                     href="#"
                                                     style={ {
+                                                        ...getTypography( attributes, 0 ),
                                                         color: this.state.itemsType === 'itemsBusiness' ? attributes.blueColor : attributes.textColorBestSeller,
                                                         background: this.state.itemsType === 'itemsBusiness' ? attributes.textColorBestSeller : attributes.blueColor,
                                                     } }
@@ -442,6 +459,7 @@ export default class Edit extends Component {
                                                         } }
                                                         placeholder={ __( 'Table type', 'kenzap-pricing' ) }
                                                         style={ {
+                                                            //...getTypography( attributes, 0 ),
                                                             color: this.state.itemsType === 'itemsBusiness' ? attributes.blueColor : attributes.textColorBestSeller,
                                                             background: this.state.itemsType === 'itemsBusiness' ? attributes.textColorBestSeller : attributes.blueColor,
                                                             width: ( attributes.tableTypes.business.length === 0 ? 10 : attributes.tableTypes.business.length ) * 10,
@@ -461,6 +479,7 @@ export default class Edit extends Component {
                                     </div>
                                 </div>
                             </div>
+                            { attributes.nestedBlocks == 'bottom' && <InnerBlocks /> }
                         </div>
                         { this.state.showError && <div className={ 'errorMessage errorShow' }>
                             { __( 'No more than 3 pricing tables are allowed per block.', 'kenzap-pricing' ) }

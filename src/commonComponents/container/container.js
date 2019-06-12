@@ -1,15 +1,20 @@
-const { __ } = wp.i18n; // Import __() from wp.i18n
-const { RangeControl, CheckboxControl, SelectControl, RadioControl, PanelBody, Button } = wp.components;
+const { __ } = wp.i18n; 
+const { RangeControl, CheckboxControl, SelectControl, PanelBody, Button } = wp.components;
 const { Component, Fragment } = wp.element;
 const { MediaUpload, PanelColorSettings } = wp.editor;
 
 export const blockProps = {
     containerMaxWidth: {
         type: 'string',
-        default: '1170',
+        default: '2000',
     },
 
     containerPadding: {
+        type: 'number',
+        default: 0,
+    },
+
+    containerSidePadding: {
         type: 'number',
         default: 0,
     },
@@ -34,9 +39,13 @@ export const blockProps = {
         default: false,
     },
 
+    parallax: {
+        type: 'boolean',
+        default: false,
+    },
+
     backgroundColor: {
         type: 'string',
-        default: '#FFF',
     },
 
     backgroundImage: {
@@ -63,13 +72,31 @@ export const blockProps = {
         type: 'string',
         default: '',
     },
+
+    nestedBlocks: {
+        type: 'string',
+        default: '',
+    },
+
+    uniqueID: {
+        type: 'string',
+    },
 };
+
+/**
+ * Removes domain name from the url
+ * @param {string} value - url
+ */
+//export const uo = ( url ) => { if(typeof(url)==='undefined') return ''; return url.replace(/^.*\/\/[^\/]+/, ''); };
+export const uo = ( url ) => { return url; };
 
 /**
  * Implements inspector container
  */
 export class InspectorContainer extends Component {
+
     render() {
+
         const {
             withBackground = true,
             backgroundImageId,
@@ -81,34 +108,38 @@ export class InspectorContainer extends Component {
             alignment,
             setAttributes,
             width100,
+            parallax,
             withWidth100 = false,
             withPadding = false,
+            withNested = false,
             containerPadding,
+            containerSidePadding,
             autoPadding = '',
+            nestedBlocks = '',
         } = this.props;
 
         return (
             <Fragment>
                 { withBackground &&
                 <PanelBody
-                    title={ __( 'Background', 'kenzap-pricing' ) }
+                    title={ __( 'Background' ) }
                     initialOpen={ false }
                 >
                     <PanelColorSettings
-                        title={ __( 'Color', 'kenzap-pricing' ) }
+                        title={ __( 'Color' ) }
                         initialOpen={ true }
                         colorSettings={ [
                                 {
                                     value: backgroundColor,
                                     onChange: ( value ) => {
-                                        return setAttributes( { backgroundColor: ((typeof(value)=='undefined')?'#f1f1f1': value) } );
+                                        return setAttributes( { backgroundColor: value } );
                                     },
-                                    label: __( 'Selected', 'kenzap-pricing' ),
+                                    label: __( 'Selected' ),
                                 },
                             ] }
                     />
 
-                    <p style={ { marginBottom: '5px' } }>{ __( 'Image', 'kenzap-pricing' ) }</p>
+                    <p style={ { marginBottom: '5px' } }>{ __( 'Image' ) }</p>
                     <MediaUpload
                         onSelect={ ( media ) => {
                                 this.props.setAttributes( {
@@ -131,7 +162,7 @@ export class InspectorContainer extends Component {
                                                 } );
                                             } }
                                         >
-                                            { __( 'Remove', 'kenzap-pricing' ) }
+                                            { __( 'Remove' ) }
                                         </Button>
                                         <div
                                             style={ {
@@ -139,7 +170,7 @@ export class InspectorContainer extends Component {
                                                 height: '27px',
                                                 display: 'inline-block',
                                                 margin: '0 0 0 5px',
-                                                backgroundImage: `url(${ [ this.props.backgroundImage ? this.props.backgroundImage : '' ] })`,
+                                                backgroundImage: `url(${ [ this.props.backgroundImage ? uo(this.props.backgroundImage) : '' ] })`,
                                                 backgroundRepeat: 'no-repeat',
                                                 backgroundSize: 'cover',
                                             } }
@@ -147,7 +178,7 @@ export class InspectorContainer extends Component {
                                     </Fragment>
                                 ) : (
                                     <Button isDefault onClick={ mediaUploadProps.open }>
-                                        { __( 'Upload/Choose', 'kenzap-pricing' ) }
+                                        { __( 'Upload/Choose' ) }
                                     </Button>
                                 ) }
                             </Fragment>
@@ -156,110 +187,134 @@ export class InspectorContainer extends Component {
                         />
 
                     <p style={ { fontStyle: 'italic' } }>
-                        { __( 'Override background color with image. Transparent images may also apply.', 'kenzap-pricing' ) }
+                        { __( 'Override background color with image.' ) }
                     </p>
 
+                    { backgroundImage !== 'none' && <Fragment>
                     <SelectControl
-                        label={ __( 'Image Alignment', 'kenzap-pricing' ) }
+                        label={ __( 'Style' ) }
                         value={ backgroundRepeat }
                         options={ [
-                                { label: __( 'default', 'kenzap-pricing' ), value: 'default' },
-                                { label: __( 'contain', 'kenzap-pricing' ), value: 'contain' },
-                                { label: __( 'cover', 'kenzap-pricing' ), value: 'cover' },
-                                { label: __( 'repeat', 'kenzap-pricing' ), value: 'repeat' },
+                                { label: __( 'default' ), value: 'default' },
+                                { label: __( 'contain' ), value: 'contain' },
+                                { label: __( 'cover' ), value: 'cover' },
+                                { label: __( 'repeated' ), value: 'repeat' },
                             ] }
                         onChange={ ( value ) => {
                                 setAttributes( { backgroundStyle: value } );
                             } }
-                        help={ __( 'Choose how to align background image', 'kenzap-pricing' ) }
+                        help={ __( 'Background image alignment.' ) }
                         />
 
                     <SelectControl
-                        label={ __( 'Background Position', 'kenzap-pricing' ) }
+                        label={ __( 'Position' ) }
                         value={ backgroundPosition }
                         options={ [
-                                { label: __( 'left top', 'kenzap-pricing' ), value: 'left top' },
-                                { label: __( 'left center', 'kenzap-pricing' ), value: 'left center' },
-                                { label: __( 'left bottom', 'kenzap-pricing' ), value: 'left bottom' },
-                                { label: __( 'right top', 'kenzap-pricing' ), value: 'right top' },
-                                { label: __( 'right center', 'kenzap-pricing' ), value: 'right center' },
-                                { label: __( 'right bottom', 'kenzap-pricing' ), value: 'right bottom' },
-                                { label: __( 'center top', 'kenzap-pricing' ), value: 'center top' },
-                                { label: __( 'center center', 'kenzap-pricing' ), value: 'center center' },
-                                { label: __( 'center bottom', 'kenzap-pricing' ), value: 'center bottom' },
+                                { label: __( 'left top' ), value: 'left top' },
+                                { label: __( 'left center' ), value: 'left center' },
+                                { label: __( 'left bottom' ), value: 'left bottom' },
+                                { label: __( 'right top' ), value: 'right top' },
+                                { label: __( 'right center' ), value: 'right center' },
+                                { label: __( 'right bottom' ), value: 'right bottom' },
+                                { label: __( 'center top' ), value: 'center top' },
+                                { label: __( 'center center' ), value: 'center center' },
+                                { label: __( 'center bottom' ), value: 'center bottom' },
                             ] }
                         onChange={ ( value ) => {
                                 setAttributes( { backgroundPosition: value } );
                             } }
-                        help={ __( 'Sets the starting position of a background image', 'kenzap-pricing' ) }
+                        help={ __( 'Starting position of the background image.' ) }
                         />
+
+                    <CheckboxControl
+                        label={ __( 'Parallax' ) }
+                        checked={ parallax }
+                        onChange={ ( parallax ) => {
+                            setAttributes( {
+                                parallax: parallax,
+                            } );
+                        } }
+                        help={ __( 'Background image behaviour during scroll.' ) }
+                    />
+                    </Fragment>}
                 </PanelBody>
                 }
 
                 <PanelBody
-                    title={ __( 'Container', 'kenzap-pricing' ) }
+                    title={ __( 'Container' ) }
                     initialOpen={ false }
                 >
-                    <RadioControl
-                        label={ __( 'Alignment', 'kenzap-pricing' ) }
-                        selected={ alignment }
-                        options={ [
-                            { label: 'Default', value: '' },
-                            { label: 'Full width', value: 'fullwidth' },
-                        ] }
-                        onChange={ ( value ) => {
-                            setAttributes( { alignment: value } );
-                        } }
-                        help={ __( 'Full Width may not work properly with all layout types including layouts with sidebars', 'kenzap-pricing' ) }
-                    />
 
                     { ! width100 &&
                     <RangeControl
-                        label={ __( 'Max Width', 'kenzap-pricing' ) }
+                        label={ __( 'Max width' ) }
                         value={ Number( containerMaxWidth ) }
                         onChange={ ( value ) => setAttributes( { containerMaxWidth: `${ value }` } ) }
                         min={ 300 }
                         max={ 2000 }
-                        help={ __( 'Restrict layout width for content children.', 'kenzap-pricing' ) }
+                        help={ __( 'Restrict layout width for content children.' ) }
                     />
                     }
 
                     { withWidth100 &&
                     <CheckboxControl
-                        label={ __( 'No Restriction', 'kenzap-pricing' ) }
+                        label={ __( 'Full width' ) }
                         checked={ width100 }
                         onChange={ ( isChecked ) => {
                             setAttributes( {
                                 width100: isChecked,
-                                containerMaxWidth: isChecked ? '100%' : '1170',
+                                containerMaxWidth: isChecked ? '100%' : '2000',
                             } );
                         } }
-                        help={ __( 'No restriction layout width for content children.', 'kenzap-pricing' ) }
+                        help={ __( 'Ignore max width restriction.' ) }
                     />
                     }
 
                     { withPadding &&
                         <Fragment>
                             <RangeControl
-                                label={ __( 'Top & Bottom Paddings', 'kenzap-pricing' ) }
+                                label={ __( 'Top and bottom paddings' ) }
                                 value={ containerPadding }
                                 onChange={ ( value ) => setAttributes( { containerPadding: value } ) }
                                 min={ 0 }
                                 max={ 200 }
-                                help={ __( 'Useful when you want to extend background image vertical size or create more space.', 'kenzap-pricing' ) }
+                            />
+
+                            <RangeControl
+                                label={ __( 'Left and right paddings' ) }
+                                value={ containerSidePadding }
+                                onChange={ ( value ) => setAttributes( { containerSidePadding: value } ) }
+                                min={ 0 }
+                                max={ 50 }
                             />
 
                             <CheckboxControl
-                                label={ __( 'Responsive Paddings', 'kenzap-pricing' ) }
+                                label={ __( 'Responsive paddings' ) }
                                 checked={ autoPadding.length > 0 }
                                 onChange={ ( isChecked ) => {
                                     setAttributes( {
                                         autoPadding: isChecked ? 'autoPadding' : '',
                                     } );
                                 } }
-                                help={ __( 'Provides auto calculations for top and bottom paddings', 'kenzap-pricing' ) }
+                                help={ __( 'Auto calculate top and bottom paddings' ) }
                             />
                         </Fragment>
+                    }
+
+                    { withNested &&
+                    <SelectControl
+                        label={ __( 'Nested block' ) }
+                        value={ nestedBlocks }
+                        options={ [
+                                { label: __( 'hidden' ), value: '' },
+                                { label: __( 'top' ), value: 'top' },
+                                { label: __( 'bottom' ), value: 'bottom' },
+                            ] }
+                        onChange={ ( value ) => {
+                                setAttributes( { nestedBlocks: value } );
+                            } }
+                            help={ __( 'Embed other blocks inside this container. Nested blocks inherit parent block styling settings. Add custom headings, spacings or paragraphs.' ) }
+                        />
                     }
                 </PanelBody>
             </Fragment>
@@ -278,7 +333,7 @@ export const ContainerEdit = ( props ) => {
 
     if ( props.withBackground ) {
         if ( props.attributes.backgroundImage ) {
-            styles.backgroundImage = props.attributes.backgroundImage !== 'none' ? `url(${ props.attributes.backgroundImage })` : 'none';
+            styles.backgroundImage = props.attributes.backgroundImage !== 'none' ? `url(${ uo(props.attributes.backgroundImage) })` : 'none';
             styles.backgroundRepeat = props.attributes.backgroundRepeat;
             styles.backgroundSize = props.attributes.backgroundSize;
             styles.backgroundPosition = props.attributes.backgroundPosition;
@@ -290,68 +345,11 @@ export const ContainerEdit = ( props ) => {
     }
 
     if ( props.withPadding && ! props.attributes.autoPadding ) {
-        styles.padding = `${ props.attributes.containerPadding }px 0`;
+        styles.padding = `${ props.attributes.containerPadding }px 0px`;
     }
 
-    switch ( props.attributes.backgroundStyle ) {
-        case 'default': {
-            styles.backgroundRepeat = 'no-repeat';
-            styles.backgroundSize = 'auto';
-            break;
-        }
-
-        case 'contain': {
-            styles.backgroundRepeat = 'no-repeat';
-            styles.backgroundSize = 'contain';
-            break;
-        }
-
-        case 'cover': {
-            styles.backgroundRepeat = 'no-repeat';
-            styles.backgroundSize = 'cover';
-            break;
-        }
-
-        case 'repeat': {
-            styles.backgroundRepeat = 'repeat';
-            styles.backgroundSize = 'auto';
-        }
-    }
-
-    return (
-        <div
-            className={ `${ props.className } admin ${ props.attributes.alignment } ${ props.attributes.autoPadding }` }
-            style={ { ...styles, ...props.style } }
-        >
-            { props.children }
-        </div>
-    );
-};
-
-/**
- * Implements the save container
- * @param {Object} props from editor
- * @return {Node} rendered edit component
- * @constructor
- */
-export const ContainerSave = ( props ) => {
-    const styles = {};
-
-    if ( props.withBackground ) {
-        if ( props.attributes.backgroundImage ) {
-            styles.backgroundImage = props.attributes.backgroundImage !== 'none' ? `url(${ props.attributes.backgroundImage })` : 'none';
-            styles.backgroundRepeat = props.attributes.backgroundRepeat;
-            styles.backgroundSize = props.attributes.backgroundSize;
-            styles.backgroundPosition = props.attributes.backgroundPosition;
-        }
-
-        if ( props.attributes.backgroundColor ) {
-            styles.backgroundColor = props.attributes.backgroundColor;
-        }
-    }
-
-    if ( props.withPadding && ! props.attributes.autoPadding ) {
-        styles.padding = `${ props.attributes.containerPadding }px 0`;
+    if ( props.attributes.parallax ) {
+        styles.backgroundAttachment = 'fixed';
     }
 
     switch ( props.attributes.backgroundStyle ) {
@@ -380,7 +378,7 @@ export const ContainerSave = ( props ) => {
     }
 
     let additionalClassForKenzapContainer = 'kenzap-lg';
-    if ( props.attributes.containerMaxWidth < 992 ) {
+    if (props.attributes.containerMaxWidth < 992 ) {
         additionalClassForKenzapContainer = 'kenzap-md';
     }
     if ( props.attributes.containerMaxWidth < 768 ) {
@@ -389,14 +387,92 @@ export const ContainerSave = ( props ) => {
     if ( props.attributes.containerMaxWidth < 480 ) {
         additionalClassForKenzapContainer = 'kenzap-xs';
     }
-
     if ( props.attributes.width100 ) {
         additionalClassForKenzapContainer = 'kenzap-lg';
     }
 
     return (
         <div
-            className={ `${ props.className } ${ additionalClassForKenzapContainer } ${ props.attributes.alignment } ${ props.attributes.autoPadding }` }
+            className={ `${ props.className } ${additionalClassForKenzapContainer} ${ props.attributes.alignment } ${ props.attributes.autoPadding }` }
+            style={ { ...styles, ...props.style } }
+        >
+            { props.children }
+        </div>
+    );
+};
+
+/**
+ * Implements the save container
+ * @param {Object} props from editor
+ * @return {Node} rendered edit component
+ * @constructor
+ */
+export const ContainerSave = ( props ) => {
+    const styles = {};
+
+    if ( props.withBackground ) {
+        if ( props.attributes.backgroundImage ) {
+            styles.backgroundImage = props.attributes.backgroundImage !== 'none' ? `url(${ uo(props.attributes.backgroundImage) })` : 'none';
+            styles.backgroundRepeat = props.attributes.backgroundRepeat;
+            styles.backgroundSize = props.attributes.backgroundSize;
+            styles.backgroundPosition = props.attributes.backgroundPosition;
+        }
+
+        if ( props.attributes.backgroundColor ) {
+            styles.backgroundColor = props.attributes.backgroundColor;
+        }
+    }
+
+    if ( props.withPadding && ! props.attributes.autoPadding ) {
+        styles.padding = `${ props.attributes.containerPadding }px 0px`;
+    }
+
+    if ( props.attributes.parallax ) {
+        styles.backgroundAttachment = 'fixed';
+    }
+
+    switch ( props.attributes.backgroundStyle ) {
+        case 'default': {
+            styles.backgroundRepeat = 'no-repeat';
+            styles.backgroundSize = 'auto';
+            break;
+        }
+
+        case 'contain': {
+            styles.backgroundRepeat = 'no-repeat';
+            styles.backgroundSize = 'contain';
+            break;
+        }
+
+        case 'cover': {
+            styles.backgroundRepeat = 'no-repeat';
+            styles.backgroundSize = 'cover';
+            break;
+        }
+
+        case 'repeat': {
+            styles.backgroundRepeat = 'repeat';
+            styles.backgroundSize = 'auto';
+        }
+    }
+
+    let additionalClassForKenzapContainer = 'kenzap-lg';
+    if (props.attributes.containerMaxWidth < 992 ) {
+        additionalClassForKenzapContainer = 'kenzap-md';
+    }
+    if ( props.attributes.containerMaxWidth < 768 ) {
+        additionalClassForKenzapContainer = 'kenzap-sm';
+    }
+    if ( props.attributes.containerMaxWidth < 480 ) {
+        additionalClassForKenzapContainer = 'kenzap-xs';
+    }
+    if ( props.attributes.width100 ) {
+        additionalClassForKenzapContainer = 'kenzap-lg';
+    }
+
+    return (
+        <div
+            className={ `${ props.className } ${additionalClassForKenzapContainer} ${ props.attributes.alignment } ${ props.attributes.autoPadding }` }
             style={ { ...styles, ...props.style } }
         >
             { props.children }

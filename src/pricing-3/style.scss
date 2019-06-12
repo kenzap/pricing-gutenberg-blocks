@@ -22,6 +22,8 @@
 .kenzap .kenzap-pricing-3 .kenzap-container{
   max-width:1170px;
   margin:0 auto;
+  padding:0 var(--paddings2,0);
+  overflow-x:hidden;
 }
 
 .kenzap .kenzap-pricing-3.autoPadding {
@@ -30,6 +32,7 @@
 
 .kenzap .kenzap-pricing-3 .kenzap-row{
   overflow:hidden;
+  margin: 0 -15px;
 }
 
 .kenzap .kenzap-pricing-3 .kenzap-col-4{
@@ -184,7 +187,7 @@
   font-size: inherit;
   font-weight: inherit;
   color: inherit;
-  line-height: 1.7333333333;
+  //line-height: 1.7333333333;
 }
 
 .kenzap .kenzap-pricing-3 .pricing-box ul li:last-child{

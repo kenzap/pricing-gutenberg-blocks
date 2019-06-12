@@ -1,98 +1,98 @@
-.kenzap .kenzap-pricing-6 :before,
-.kenzap .kenzap-pricing-6 :after,
-.kenzap .kenzap-pricing-6 *{
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
+// .kenzap .kenzap-pricing-6 :before,
+// .kenzap .kenzap-pricing-6 :after,
+// .kenzap .kenzap-pricing-6 *{
+//   -webkit-box-sizing: border-box;
+//   -moz-box-sizing: border-box;
+//   box-sizing: border-box;
+// }
 
-.kenzap .kenzap-pricing-6 img,
-.kenzap .kenzap-pricing-6 ul,
-.kenzap .kenzap-pricing-6 li,
-.kenzap .kenzap-pricing-6 p,
-.kenzap .kenzap-pricing-6 a{
-  padding: 0;
-  margin: 0;
-  box-shadow: none;
-  border: none;
-  text-decoration: none;
-  list-style:none
-}
+// .kenzap .kenzap-pricing-6 img,
+// .kenzap .kenzap-pricing-6 ul,
+// .kenzap .kenzap-pricing-6 li,
+// .kenzap .kenzap-pricing-6 p,
+// .kenzap .kenzap-pricing-6 a{
+//   padding: 0;
+//   margin: 0;
+//   box-shadow: none;
+//   border: none;
+//   text-decoration: none;
+//   list-style:none
+// }
 
-.kenzap .kenzap-pricing-6 .kenzap-container{
-  max-width:1170px;
-  padding:0 15px;
-  margin:0 auto;
-}
+// .kenzap .kenzap-pricing-6 .kenzap-container{
+//   max-width:1170px;
+//   padding:0 15px;
+//   margin:0 auto;
+// }
 
-.kenzap .kenzap-pricing-6.autoPadding {
-  padding: calc(30px + (var(--paddings) - 30) * ((100vw - 300px) / (1600 - 300))) 0;
-}
+// .kenzap .kenzap-pricing-6.autoPadding {
+//   padding: calc(30px + (var(--paddings) - 30) * ((100vw - 300px) / (1600 - 300))) 0;
+// }
 
-.kenzap .kenzap-pricing-6 .kenzap-row{
-  margin:0 -15px;
-  display:flex;
-  align-items:flex-end
-}
+// .kenzap .kenzap-pricing-6 .kenzap-row{
+//   margin:0 -15px;
+//   display:flex;
+//   align-items:flex-end
+// }
 
-.kenzap .kenzap-pricing-6 .kenzap-col-4{
-  width:33.33333%;
-  float:left;
-  padding:0 15px;
-  position: relative;
-}
+// .kenzap .kenzap-pricing-6 .kenzap-col-4{
+//   width:33.33333%;
+//   float:left;
+//   padding:0 15px;
+//   position: relative;
+// }
 
-.kenzap .kenzap-pricing-6{
-  padding:150px 0;
-  background:#f6f6f6
-}
+// .kenzap .kenzap-pricing-6{
+//   padding:150px 0;
+//   background:#f6f6f6
+// }
 
-.kenzap .kenzap-pricing-6 .pricing-box{
-  position: relative;
-  margin-top: 1rem;
-  -moz-transition: all 0.3s;
-  -webkit-transition: all 0.3s;
-  transition: all 0.3s;
-  padding: 40px;
-  background:#fff
-}
+// .kenzap .kenzap-pricing-6 .pricing-box{
+//   position: relative;
+//   margin-top: 1rem;
+//   -moz-transition: all 0.3s;
+//   -webkit-transition: all 0.3s;
+//   transition: all 0.3s;
+//   padding: 40px;
+//   background:#fff
+// }
 
-.kenzap .kenzap-pricing-6 .pricing-box:hover{
-  -moz-transform: scale(1.05);
-  -webkit-transform: scale(1.05);
-  transform: scale(1.05);
-}
+// .kenzap .kenzap-pricing-6 .pricing-box:hover{
+//   -moz-transform: scale(1.05);
+//   -webkit-transform: scale(1.05);
+//   transform: scale(1.05);
+// }
 
-.kenzap .kenzap-pricing-6 .pricing-box.best-seller{
-  margin-top:0;
-  padding:55px 40px 40px;
-  position:relative
-}
+// .kenzap .kenzap-pricing-6 .pricing-box.best-seller{
+//   margin-top:0;
+//   padding:55px 40px 40px;
+//   position:relative
+// }
 
-.kenzap .kenzap-pricing-6 .pricing-box.best-seller .ribbon{
-  position: absolute;
-  top: 1rem;
-  left: 0;
-  padding: 0 1.5rem;
-  font-size: 0.9rem;
-  letter-spacing: 1.2px;
-  font-weight: 400;
-  line-height: 33px;
-  background:#850202;
-  color:#fff
-}
+// .kenzap .kenzap-pricing-6 .pricing-box.best-seller .ribbon{
+//   position: absolute;
+//   top: 1rem;
+//   left: 0;
+//   padding: 0 1.5rem;
+//   font-size: 0.9rem;
+//   letter-spacing: 1.2px;
+//   font-weight: 400;
+//   line-height: 33px;
+//   background:#850202;
+//   color:#fff
+// }
 
-.kenzap .kenzap-pricing-6 .pricing-box h3{
-  color: #850202;
-  font-size: 1.4rem;
-  line-height: 1.8rem;
-  letter-spacing: 1px;
-  font-weight: 600;
-  text-transform: none;
-  text-align: center;
-  margin:0 0 30px;
-  display:block;
-}
+// .kenzap .kenzap-pricing-6 .pricing-box h3{
+//   color: #850202;
+//   font-size: 1.4rem;
+//   line-height: 1.8rem;
+//   letter-spacing: 1px;
+//   font-weight: 600;
+//   text-transform: none;
+//   text-align: center;
+//   margin:0 0 30px;
+//   display:block;
+// }
 
 .kenzap .kenzap-pricing-6 .pricing-box > .kp-price{
   display:block;

@@ -19,7 +19,7 @@
 
 .kenzap .kenzap-pricing-1 .kenzap-container{
   max-width:1170px;
-  padding:0 15px;
+  padding:0 var(--paddings2,0);
   margin:0 auto;
 }
 
@@ -28,7 +28,7 @@
 }
 
 .kenzap .kenzap-pricing-1 .kenzap-row{
-  margin:0 -15px;
+  margin:0 0px;
   overflow:hidden;
 }
 
@@ -59,7 +59,7 @@
 
 .kenzap .kenzap-pricing-1 .pricing-box h3{
   margin-bottom: 12px;
-  text-transform: uppercase;
+  //text-transform: uppercase;
   margin:0 0 12px;
   font-weight: 500;
   font-size: 20px;
@@ -136,24 +136,28 @@
   background: var(--bbc, #0abc5f);
   border-radius: 4px;
   border-width: 0;
-  text-transform: uppercase;
+  transition: all 0.3s;
+  //text-transform: uppercase;
   font-weight: 500;
   font-size: 15px;
+  border-style:solid;
+  border-width:0px;
   color: var(--btc, #fff);
   line-height: 1.6;
   text-decoration:none;
 }
 
 .kenzap .kenzap-pricing-1 .pricing-box .kp-link:hover{
-  color: var(--bbc, #0abc5f);
-  background: var(--btc, #fff);
+  color: var(--hcl, #0abc5f)!important;
+  background: var(--hbacl, #fff)!important;
+  border-color: var(--hbrcl, #fff)!important;;
 }
 
 .kenzap .kenzap-pricing-1.kenzap-md .kenzap-row{
   display:flex;
   align-items:center;
   justify-content:center;
-  flex-wrap:wrap
+  flex-wrap:wrap;
 }
 
 .kenzap .kenzap-pricing-1.kenzap-md .kenzap-col-4{

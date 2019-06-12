@@ -1,11 +1,10 @@
-const { __ } = wp.i18n; // Import __() from wp.i18n
+const { __ } = wp.i18n; 
 const { Component } = wp.element;
-const { RichText, InspectorControls, PanelColorSettings, MediaUpload } = wp.editor;
+const { RichText, InspectorControls, MediaUpload, InnerBlocks } = wp.editor;
 const { RangeControl, PanelBody, Popover, TextControl, ToggleControl } = wp.components;
-
-import { defaultItem, getStyles } from './block';
-
+import { defaultItem, typographyArr, getStyles } from './block';
 import { InspectorContainer, ContainerEdit } from '../commonComponents/container/container';
+import { TypographyContainer, getTypography } from '../commonComponents/typography/typography';
 import { Plus } from '../commonComponents/icons/plus';
 
 /**
@@ -116,27 +115,6 @@ export default class Edit extends Component {
                             max={ 200 }
                         />
                         <RangeControl
-                            label={ __( 'Title Size', 'kenzap-pricing' ) }
-                            value={ attributes.titleSize }
-                            onChange={ ( titleSize ) => setAttributes( { titleSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
-                        <RangeControl
-                            label={ __( 'Subtitle Size', 'kenzap-pricing' ) }
-                            value={ attributes.descriptionSize }
-                            onChange={ ( descriptionSize ) => setAttributes( { descriptionSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
-                        <RangeControl
-                            label={ __( 'Description Size', 'kenzap-pricing' ) }
-                            value={ attributes.listDescriptionSize }
-                            onChange={ ( listDescriptionSize ) => setAttributes( { listDescriptionSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
-                        <RangeControl
                             label={ __( 'Featured Table', 'kenzap-pricing' ) }
                             value={ attributes.bestSellerBlock }
                             onChange={ ( bestSellerBlock ) => setAttributes( { bestSellerBlock } ) }
@@ -150,41 +128,15 @@ export default class Edit extends Component {
                             min={ 0 }
                             max={ 100 }
                         />
-                        <RangeControl
-                            label={ __( 'Button Border Radius', 'kenzap-pricing' ) }
-                            value={ attributes.buttonBorderRadius }
-                            onChange={ ( buttonBorderRadius ) => setAttributes( { buttonBorderRadius } ) }
-                            min={ 0 }
-                            max={ 100 }
-                        />
+
                     </PanelBody>
-                    <PanelColorSettings
-                        title={ __( 'Colors', 'kenzap-pricing' ) }
-                        initialOpen={ false }
-                        colorSettings={ [
-                            {
-                                value: attributes.textColor,
-                                onChange: ( value ) => {
-                                    return setAttributes( { textColor: ((typeof(value)=='undefined')?'#fff':value) } );
-                                },
-                                label: __( 'Text', 'kenzap-pricing' ),
-                            },
-                            {
-                                value: attributes.buttonColor,
-                                onChange: ( buttonColor ) => {
-                                    return setAttributes( { buttonColor: ((typeof(buttonColor)=='undefined')?'#0abc5f':buttonColor) } );
-                                },
-                                label: __( 'Button Background', 'kenzap-pricing' ),
-                            },
-                            {
-                                value: attributes.buttonTextColor,
-                                onChange: ( buttonTextColor ) => {
-                                    return setAttributes( { buttonTextColor: ((typeof(buttonColor)=='undefined')?'#fff':buttonColor) } );
-                                },
-                                label: __( 'Button Text', 'kenzap-pricing' ),
-                            },
-                        ] }
+
+                    <TypographyContainer
+                        setAttributes={ setAttributes }
+                        typographyArr={ typographyArr }
+                        { ...attributes }
                     />
+
                     <InspectorContainer
                         setAttributes={ setAttributes }
                         { ...attributes }
@@ -192,17 +144,20 @@ export default class Edit extends Component {
                         withWidth100
                         withBackground
                         withAutoPadding
+                        withNested
                     />
                 </InspectorControls>
                 <div className={ `${ className ? className : '' } ` } style={ vars }>
                     <ContainerEdit
-                        className={ `kenzap-pricing-1 block-${ attributes.blockUniqId } ${ 'kenzap-sm' } ${ isSelected ? 'selected' : '' } ` }
+                        className={ `kenzap-pricing-1 block-${ attributes.blockUniqId } ${ isSelected ? 'selected' : '' } ` }
                         attributes={ attributes }
                         withBackground
                         withPadding
                     >
                         <div className="kenzap-container" style={ kenzapContanerStyles }>
+                            { attributes.nestedBlocks == 'top' && <InnerBlocks /> }
                             <div className="kp-pricing-table">
+                                <div className="kenzap-row">
                                 { attributes.items && attributes.items.map( ( item, index ) => (
                                     <div
                                         key={ item.key }
@@ -239,29 +194,18 @@ export default class Edit extends Component {
                                                 placeholder={ __( 'Title', 'kenzap-pricing' ) }
                                                 value={ item.title }
                                                 onChange={ ( value ) => this.onChangePropertyItem( 'title', value, index, true ) }
-                                                style={ {
-                                                    color: attributes.textColor,
-                                                    fontSize: `${ attributes.titleSize }px`,
-                                                    lineHeight: `${ attributes.titleSize * 1.4 }px`,
-                                                } }
+                                                style={ getTypography( attributes, 0 ) }
                                             />
                                             <RichText
                                                 tagName="p"
                                                 placeholder={ __( 'Description', 'kenzap-pricing' ) }
                                                 value={ item.description }
                                                 onChange={ ( value ) => this.onChangePropertyItem( 'description', value, index, true ) }
-                                                style={ {
-                                                    color: attributes.textColor,
-                                                    fontSize: `${ attributes.descriptionSize }px`,
-                                                    lineHeight: `${ attributes.descriptionSize * 1.74 }px`,
-                                                } }
+                                                style={ getTypography( attributes, 1 ) }
                                             />
                                             <strong
                                                 className="kp-price"
-                                                style={ {
-                                                    color: attributes.textColor,
-                                                    lineHeight: 1.25,
-                                                } }
+                                                style={ getTypography( attributes, 2 ) }
                                             >
                                                 <sup>
                                                     <input
@@ -273,7 +217,6 @@ export default class Edit extends Component {
                                                         placeholder={ __( '$', 'kenzap-pricing' ) }
                                                         style={ {
                                                             width: `${ ( item.currency.length === 0 ? 1 : item.currency.length ) * 20 }px`,
-                                                            color: attributes.textColor,
                                                         } }
                                                     />
                                                 </sup>
@@ -286,7 +229,6 @@ export default class Edit extends Component {
                                                     placeholder={ __( '100', 'kenzap-pricing' ) }
                                                     style={ {
                                                         width: `${ ( item.price.length === 0 ? 3 : item.price.length ) * 31 }px`,
-                                                        color: attributes.textColor,
                                                     } }
                                                 />
                                                 <sub>/
@@ -300,30 +242,24 @@ export default class Edit extends Component {
 
                                                         style={ {
                                                             width: `${ ( item.period.length === 0 ? 2 : item.period.length ) * 25 }px`,
-                                                            color: attributes.textColor,
                                                         } }
                                                     />
                                                 </sub>
                                             </strong>
+                                            
                                             <RichText
                                                 tagName="ul"
                                                 placeholder={ __( 'Description' ) }
                                                 value={ item.subDescription }
                                                 onChange={ ( value ) => this.onChangePropertyItem( 'subDescription', value, index, true ) }
                                                 multiline="li"
-                                                style={ {
-                                                    color: attributes.textColor,
-                                                    fontSize: `${ attributes.listDescriptionSize }px`,
-                                                    lineHeight: `${ attributes.listDescriptionSize * 1.74 }px`,
-                                                } }
+                                                style={ getTypography( attributes, 3 ) }
                                             />
                                             <a
                                                 className="kp-link"
                                                 onClick={ () => this.setState( { isButtonPopupVisibleIndex: index } ) }
-                                                style={ {
-                                                    background: attributes.buttonColor,
-                                                    borderRadius: attributes.buttonBorderRadius,
-                                                } }
+                                                style={ getTypography( attributes, 4 ) }
+                                                rel="noopener noreferrer"
                                             >
                                                 <input
                                                     value={ item.buttonText }
@@ -333,7 +269,6 @@ export default class Edit extends Component {
                                                     } }
                                                     style={ {
                                                         width: `${ 15 * item.buttonText.length * 0.7 }px`,
-                                                        color: attributes.buttonTextColor,
                                                     } }
                                                 />
                                             </a>
@@ -366,7 +301,9 @@ export default class Edit extends Component {
                                         </div>
                                     </div>
                                 ) ) }
+                                </div>
                             </div>
+                            { attributes.nestedBlocks == 'bottom' && <InnerBlocks /> }
                         </div>
                         { this.state.showError && <div className={ 'errorMessage errorShow' }>
                             { __( 'No more than 3 pricing tables are allowed per block.', 'kenzap-pricing' ) }

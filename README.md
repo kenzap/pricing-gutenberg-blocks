@@ -1,23 +1,3 @@
-# Pricing Gutenberg Blocks
-
-Create beautiful pricing table section on your website. 
-To be used with WordPress Gutenberg.
-
-
-![Create beatiful pricing section with Gutenberg](https://kenzap.com/website/img/pricing-3.png)
-
-<b>Block is easy customizable:</b>
-
-<ul>
-<li>Set background color</li>
-<li>Change featured table layout style</li>
-<li>Adjust images, fonts, texts, price and currencies</li>
-<li>Wide and narrow layout support</li>
-<li>Supports 6 different design layouts</li>
-</ul>
-
-# How to build the block
-
 This project was bootstrapped with [Create Guten Block](https://github.com/ahmadawais/create-guten-block).
 
 Below you will find some information on how to run scripts.

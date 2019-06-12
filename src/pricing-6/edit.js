@@ -1,11 +1,10 @@
-const { __ } = wp.i18n; // Import __() from wp.i18n
-const { Component, Fragment } = wp.element;
-const { RichText, InspectorControls, PanelColorSettings } = wp.editor;
-const { RangeControl, PanelBody, Popover, TextControl, ToggleControl } = wp.components;
-
-import { defaultItem, getStyles } from './block';
-
+const { __ } = wp.i18n; 
+const { Component } = wp.element;
+const { RichText, InspectorControls, InnerBlocks, PanelColorSettings } = wp.editor;
+const { RangeControl, PanelBody, ToggleControl } = wp.components;
+import { defaultItem, getStyles, typographyArr } from './block';
 import { InspectorContainer, ContainerEdit } from '../commonComponents/container/container';
+import { TypographyContainer, getTypography } from '../commonComponents/typography/typography';
 import { Plus } from '../commonComponents/icons/plus';
 
 /**
@@ -111,6 +110,7 @@ export default class Edit extends Component {
                         />
                         
                     </PanelBody>
+
                     <PanelColorSettings
                             title={ __( 'Colors', 'kenzap-pricing' ) }
                             initialOpen={ false }
@@ -120,17 +120,17 @@ export default class Edit extends Component {
                                     onChange: ( titleColor ) => {
                                         return setAttributes( { titleColor } );
                                     },
-                                    label: __( 'Title color', 'kenzap-pricing' ),
-                                },
-                                {
-                                    value: attributes.textColor,
-                                    onChange: ( value ) => {
-                                        return setAttributes( { textColor: value } );
-                                    },
-                                    label: __( 'Text color', 'kenzap-pricing' ),
+                                    label: __( 'Dots', 'kenzap-pricing' ),
                                 },
                             ] }
-                        />
+                    />
+
+                    <TypographyContainer
+                        setAttributes={ setAttributes }
+                        typographyArr={ typographyArr }
+                        { ...attributes }
+                    />
+
                     <InspectorContainer
                         setAttributes={ setAttributes }
                         { ...attributes }
@@ -138,6 +138,7 @@ export default class Edit extends Component {
                         withWidth100
                         withBackground
                         withAutoPadding
+                        withNested
                     />
                 </InspectorControls>
                 <div className={ className ? className : '' } style={ vars }>
@@ -148,6 +149,7 @@ export default class Edit extends Component {
                         withPadding
                     >
                         <div className="kenzap-container" style={ kenzapContanerStyles }>
+                            { attributes.nestedBlocks == 'top' && <InnerBlocks /> }
                             <div className="kp-pricing-table">
                                 { attributes.isTwoColumn ? (
                                     <div className="kenzap-row">
@@ -165,33 +167,37 @@ export default class Edit extends Component {
                                                         placeholder={ __( 'Title', 'kenzap-pricing' ) }
                                                         value={ item.title }
                                                         onChange={ ( value ) => this.onChangePropertyItem( 'title', value, index, true ) }
-                                                        style={ {
-                                                                color: attributes.titleColor,
-                                                                fontSize: `${ attributes.titleSize }px`,
-                                                            } }
+                                                        style={ getTypography( attributes, 0 ) }
+                                                        // style={ {
+                                                        //         color: attributes.titleColor,
+                                                        //         fontSize: `${ attributes.titleSize }px`,
+                                                        //     } }
                                                         />
-                                                    <p style={ { color: attributes.textColor } }>
+                                                    <p //style={ { color: attributes.textColor } }
+                                                    >
                                                         <RichText
                                                             tagName="span"
                                                             value={ item.description }
                                                             onChange={ ( value ) => this.onChangePropertyItem( 'description', value, index, true ) }
                                                             placeholder={ __( 'Description', 'kenzap-pricing' ) }
-                                                            style={ {
-                                                                    color: attributes.textColor,
-                                                                    fontSize: `${ attributes.descriptionSize }px`,
-                                                                    backgroundColor: attributes.backgroundColor,
-                                                                } }
+                                                            style={ getTypography( attributes, 1 ) }
+                                                            // style={ {
+                                                            //         color: attributes.textColor,
+                                                            //         fontSize: `${ attributes.descriptionSize }px`,
+                                                            //         backgroundColor: attributes.backgroundColor,
+                                                            //     } }
                                                             />
                                                         <RichText
                                                             tagName="span"
                                                             value={ item.price }
                                                             onChange={ ( value ) => this.onChangePropertyItem( 'price', value, index, true ) }
                                                             placeholder={ __( 'Price', 'kenzap-pricing' ) }
-                                                            style={ {
-                                                                    color: attributes.textColor,
-                                                                    fontSize: `${ attributes.descriptionSize }px`,
-                                                                    backgroundColor: attributes.backgroundColor,
-                                                                } }
+                                                            style={ getTypography( attributes, 2 ) }
+                                                            // style={ {
+                                                            //         color: attributes.textColor,
+                                                            //         fontSize: `${ attributes.descriptionSize }px`,
+                                                            //         backgroundColor: attributes.backgroundColor,
+                                                            //     } }
                                                             />
                                                     </p>
                                                 </div>
@@ -212,39 +218,44 @@ export default class Edit extends Component {
                                                 placeholder={ __( 'Title', 'kenzap-pricing' ) }
                                                 value={ item.title }
                                                 onChange={ ( value ) => this.onChangePropertyItem( 'title', value, index, true ) }
-                                                style={ {
-                                                    color: attributes.titleColor,
-                                                    fontSize: `${ attributes.titleSize }px`,
-                                                } }
+                                                style={ getTypography( attributes, 0 ) }
+                                                // style={ {
+                                                //     color: attributes.titleColor,
+                                                //     fontSize: `${ attributes.titleSize }px`,
+                                                // } }
                                             />
-                                            <p style={ { color: attributes.textColor } }>
+                                            <p //style={ { color: attributes.textColor } }
+                                            >
                                                 <RichText
                                                     tagName="span"
                                                     value={ item.description }
                                                     onChange={ ( value ) => this.onChangePropertyItem( 'description', value, index, true ) }
                                                     placeholder={ __( 'Description', 'kenzap-pricing' ) }
-                                                    style={ {
-                                                        color: attributes.textColor,
-                                                        fontSize: `${ attributes.descriptionSize }px`,
-                                                        backgroundColor: attributes.backgroundColor,
-                                                    } }
+                                                    style={ getTypography( attributes, 1 ) }
+                                                    // style={ {
+                                                    //     color: attributes.textColor,
+                                                    //     fontSize: `${ attributes.descriptionSize }px`,
+                                                    //     backgroundColor: attributes.backgroundColor,
+                                                    // } }
                                                 />
                                                 <RichText
                                                     tagName="span"
                                                     value={ item.price }
                                                     onChange={ ( value ) => this.onChangePropertyItem( 'price', value, index, true ) }
                                                     placeholder={ __( 'Price', 'kenzap-pricing' ) }
-                                                    style={ {
-                                                        color: attributes.textColor,
-                                                        fontSize: `${ attributes.descriptionSize }px`,
-                                                        backgroundColor: attributes.backgroundColor,
-                                                    } }
+                                                    style={ getTypography( attributes, 2 ) }
+                                                    // style={ {
+                                                    //     color: attributes.textColor,
+                                                    //     fontSize: `${ attributes.descriptionSize }px`,
+                                                    //     backgroundColor: attributes.backgroundColor,
+                                                    // } }
                                                 />
                                             </p>
                                         </div>
                                     ) )
                                 }
                             </div>
+                            { attributes.nestedBlocks == 'bottom' && <InnerBlocks /> }
                         </div>
                         <div className="editPadding" />
                         <button

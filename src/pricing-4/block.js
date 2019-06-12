@@ -1,17 +1,11 @@
-/**
- * BLOCK: pricing-4
- *
- */
-
-//  Import CSS.
 import './style.scss';
 import './editor.scss';
 
 const { __ } = wp.i18n;
 const { registerBlockType } = wp.blocks;
-const { RichText } = wp.editor;
-
+const { RichText, InnerBlocks } = wp.editor;
 import { blockProps, ContainerSave } from '../commonComponents/container/container';
+import { getTypography } from '../commonComponents/typography/typography';
 import Edit from './edit';
 
 export const defaultSubBlocks = JSON.stringify( [
@@ -62,12 +56,9 @@ export const getStyles = attributes => {
 
     const vars = {
         '--paddings': `${ attributes.containerPadding }`,
+        '--paddings2': `${ attributes.containerSidePadding }px`,
         '--paddingsMin': `${ attributes.containerPadding / 4 }`,
         '--paddingsMinPx': `${ attributes.containerPadding / 4 }px`,
-        '--textColor': attributes.textColor,
-        '--ctaTextColor': attributes.ctaTextColor,
-        '--gradientColor': attributes.gradientColor,
-        '--buttonBorderRadius': attributes.buttonBorderRadius,
     };
 
     return {
@@ -75,6 +66,111 @@ export const getStyles = attributes => {
         kenzapContanerStyles,
     };
 };
+
+/**
+ * Define typography defaults
+ */
+export const typographyArr = JSON.stringify([
+    {
+        'title': __( '- Note', 'kenzap-pricing' ),
+        'font-size': 18,
+        'font-weight': 4,
+        'line-height': 18,
+        'margin-bottom': 22,
+        'text-align': 'left',
+        'color':'#a2a4a5'
+    },
+    {
+        'title': __( '- Title', 'kenzap-pricing' ),
+        'type': 'title',
+        'font-size': 60,
+        'font-size-t': 45,
+        'font-size-m': 30,
+        'font-weight': 6,
+        'line-height': 64,
+        'margin-top': 54,
+        'margin-bottom': 28,
+        'text-align': 'left',
+        'color':'#333333'
+    },
+    {
+        'title': __( '- Description', 'kenzap-pricing' ),
+        'font-size': 17,
+        'font-weight': 4,
+        'line-height': 32,
+        'margin-bottom': 30,
+        'text-align': 'left',
+        'color':'#666666'
+    },
+    {
+        'title': __( '- Button', 'kenzap-pricing' ),
+        'type': 'button',
+        'font-size': 18,
+        'font-weight': 5,
+        'line-height': 55,
+        'border-radius': 50,
+        'margin-bottom': 0,
+        'color':'#333333',
+        'background-color':'#ffffff',
+        'hover-color':'#ffffff',
+        'hover-background-color':'#0693e3',
+    },
+    {
+        'title': __( '- Table title', 'kenzap-pricing' ),
+        'font-size': 18,
+        'font-weight': 4,
+        'line-height': 18,
+        'margin-bottom': 0,
+        'color':'#333333'
+    },
+    {
+        'title': __( '- Table subtitle', 'kenzap-pricing' ),
+        'font-size': 17,
+        'font-weight': 4,
+        'line-height': 32,
+        'margin-top': 10,
+        'margin-bottom': 10,
+        'color':'#b1b1b1'
+    },
+    {
+        'title': __( '- Table price 1', 'kenzap-pricing' ),
+        'font-size': 60,
+        'font-weight': 6,
+        'line-height': 72,
+        'margin-top': 0,
+        'margin-bottom': 30,
+        'color':'#282828'
+    },
+    {
+        'title': __( '- Table price 2', 'kenzap-pricing' ),
+        'font-size': 40,
+        'font-weight': 5,
+        'line-height': 52,
+        'margin-top': 0,
+        'margin-bottom': 0,
+        'color':'#282828'
+    },
+    {
+        'title': __( '- Table text', 'kenzap-pricing' ),
+        'font-size': 17,
+        'font-weight': 4,
+        'line-height': 34,
+        'margin-top': 0,
+        'padding-bottom': 45,
+        'color':'#282828'
+    },
+    {
+        'title': __( '- Table button', 'kenzap-pricing' ),
+        'type': 'button',
+        'font-size': 15,
+        'font-weight': 6,
+        'line-height': 41,
+        'margin-top': 0,
+        'border-radius': 50,
+        'padding-bottom': 0,
+        'color':'#333333'
+    },
+]);
 
 /**
  * Register: a Gutenberg Block.
@@ -98,12 +194,15 @@ registerBlockType( 'kenzap/pricing-4', {
     ],
     anchor: true,
     html: true,
+    supports: {
+        align: [ 'full', 'wide' ],
+    },
     attributes: {
         ...blockProps,
 
-        backgroundColor: {
+        align: {
             type: 'string',
-            default: '#f9fcfe',
+            default: 'full',
         },
 
         title: {
@@ -111,24 +210,9 @@ registerBlockType( 'kenzap/pricing-4', {
             default: __( 'Lorem ipsum dolor sit ametv lorem ipsum dolor', 'kenzap-pricin' ),
         },
 
-        titleColor: {
-            type: 'string',
-            default: '#000',
-        },
-
         organization: {
             type: 'string',
             default: __( 'Kenzap Cloud', 'kenzap-pricing' ),
-        },
-
-        organizationColor: {
-            type: 'string',
-            default: '#a2a4a5',
-        },
-
-        organizationSize: {
-            type: 'number',
-            default: 18,
         },
 
         description: {
@@ -136,49 +220,9 @@ registerBlockType( 'kenzap/pricing-4', {
             default: __( 'Lorem ipsum dolor sit ametv lorem ipsum dolor sit ametv lorem ipsum dolor sit ametv.', 'kenzap-pricing' ),
         },
 
-        descriptionColor: {
-            type: 'string',
-            default: '#666666',
-        },
-
-        descriptionSize: {
-            type: 'string',
-            default: 17,
-        },
-
         cardBackgroundColor: {
             type: 'string',
-            default: '#fff',
-        },
-
-        cardTitleSize: {
-            type: 'number',
-            default: 18,
-        },
-
-        periodColor: {
-            type: 'string',
-            default: '#b1b1b1',
-        },
-
-        periodSize: {
-            type: 'number',
-            default: 17,
-        },
-
-        listDescriptionSize: {
-            type: 'number',
-            default: 17,
-        },
-
-        textColor: {
-            type: 'string',
-            default: '#282828',
-        },
-
-        ctaTextColor: {
-            type: 'string',
-            default: '#282828',
+            ///default: '#fff',
         },
 
         cardBorderRadius: {
@@ -186,17 +230,17 @@ registerBlockType( 'kenzap/pricing-4', {
             default: 0,
         },
 
-        buttonBorderRadius: {
-            type: 'number',
-            default: 23,
-        },
-
         gradientColor: {
             type: 'string',
-            default: '#0c5adb',
+            //default: '#0c5adb',
         },
 
         items: {
+            type: 'array',
+            default: [],
+        },
+
+        typography: {
             type: 'array',
             default: [],
         },
@@ -230,8 +274,12 @@ registerBlockType( 'kenzap/pricing-4', {
             props.setAttributes( {
                 items: [ ...JSON.parse( defaultSubBlocks ) ],
                 isFirstLoad: false,
+                backgroundColor: '#f9fcfe',
+                gradientColor: '#0c5adb',
+                containerMaxWidth: '1200',
+                cardBackgroundColor: '#ffffff'
             } );
-            // TODO It is very bad solution to avoid low speed working of setAttributes function
+
             props.attributes.items = JSON.parse( defaultSubBlocks );
             if ( ! props.attributes.blockUniqId ) {
                 props.setAttributes( {
@@ -269,45 +317,36 @@ registerBlockType( 'kenzap/pricing-4', {
                     withPadding
                 >
                     <div className="kenzap-container" style={ kenzapContanerStyles }>
+                        { attributes.nestedBlocks == 'top' && <InnerBlocks.Content /> }
                         <div className="kp-pricing-table">
                             <div className="kenzap-row">
                                 <div className="kenzap-col-6">
-                                    <h2>
+                                    <h2 style={ { ...getTypography( attributes, 1, "margin-top" ), ...getTypography( attributes, 1, "margin-bottom" ) } }>
                                         <RichText.Content
-                                            tagName="span"
+                                            tagName="div"
                                             className="organization"
                                             value={ attributes.organization }
-                                            style={ {
-                                                fontSize: `${ attributes.organizationSize }px`,
-                                                lineHeight: `${ attributes.organizationSize }px`,
-                                                color: attributes.organizationColor,
-                                            } }
+                                            style={ getTypography( attributes, 0 ) }
                                         />
                                         <RichText.Content
                                             tagName="span"
                                             value={ attributes.title }
-                                            style={ {
-                                                color: attributes.titleColor,
-                                            } }
+                                            style={ getTypography( attributes, 1 ) }
                                         />
                                     </h2>
                                     <RichText.Content
                                         tagName="p"
                                         value={ attributes.description }
-                                        style={ {
-                                            fontSize: `${ attributes.descriptionSize }px`,
-                                            lineHeight: `${ attributes.descriptionSize * 1.9 }px`,
-                                            color: attributes.descriptionColor,
-                                        } }
+                                        style={ getTypography( attributes, 2 ) }
                                     />
                                     { attributes.isFilterShow &&
                                         <div className="tabs-nav">
                                             <ul>
                                                 <li className="active">
-                                                    <a href="#monthly">{ attributes.tableTypes.individual }</a>
+                                                    <a href="#monthly" style={ getTypography( attributes, 3 ) }>{ attributes.tableTypes.individual }</a>
                                                 </li>
                                                 <li className="">
-                                                    <a href="#yearly">{ attributes.tableTypes.business }</a>
+                                                    <a href="#yearly" style={ getTypography( attributes, 3 ) }>{ attributes.tableTypes.business }</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -332,52 +371,35 @@ registerBlockType( 'kenzap/pricing-4', {
                                                         <RichText.Content
                                                             tagName="span"
                                                             value={ item.title }
-                                                            style={ {
-                                                                color: attributes.textColor,
-                                                                fontSize: `${ attributes.cardTitleSize }px`,
-                                                            } }
+                                                            style={ getTypography( attributes, 4 ) }
                                                         />
                                                         <RichText.Content
                                                             tagName="span"
                                                             value={ item.period }
                                                             className="period"
-                                                            style={ {
-                                                                color: attributes.periodColor,
-                                                                fontSize: `${ attributes.periodSize }px`,
-                                                                lineHeight: `${ attributes.periodSize * 1.9 }px`,
-                                                            } }
+                                                            style={ getTypography( attributes, 5 ) }
                                                         />
                                                     </h3>
 
                                                     <strong
-                                                        style={ {
-                                                            lineHeight: 1.2,
-                                                            color: attributes.textColor,
-                                                        } }
+                                                        style={ getTypography( attributes, 6 ) }
                                                         className="kp-price"
                                                     >
                                                         { item.price }
-                                                        <sup style={ {
-                                                            color: attributes.textColor,
-                                                        } }>{ item.cents }</sup>
+                                                        <sup style={ getTypography( attributes, 7 ) }>{ item.cents }</sup>
                                                     </strong>
 
                                                     <RichText.Content
                                                         tagName="ul"
                                                         value={ item.subDescription }
-                                                        style={ {
-                                                            color: attributes.textColor,
-                                                            fontSize: `${ attributes.listDescriptionSize }px`,
-                                                            lineHeight: `${ attributes.listDescriptionSize * 2 }px`,
-                                                        } }
+                                                        style={ getTypography( attributes, 8 ) }
                                                     />
                                                     <a
                                                         href={ item.ctaUrl ? item.ctaUrl : 'javascript:;' }
                                                         target={ item.ctaUrlTarget ? '_blank' : '_self' }
                                                         className="kp-link"
-                                                        style={ {
-                                                            borderRadius: attributes.buttonBorderRadius,
-                                                        } }
+                                                        style={ getTypography( attributes, 9 ) }
+                                                        rel="noopener noreferrer"
                                                     >
                                                         <span>{ item.ctaText }</span>
                                                     </a>
@@ -388,6 +410,7 @@ registerBlockType( 'kenzap/pricing-4', {
                                 </div>
                             </div>
                         </div>
+                        { attributes.nestedBlocks == 'bottom' && <InnerBlocks.Content /> }
                     </div>
                 </ContainerSave>
             </div>

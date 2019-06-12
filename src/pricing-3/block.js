@@ -1,17 +1,11 @@
-/**
- * BLOCK: pricing-3
- *
- */
-
-//  Import CSS.
 import './style.scss';
 import './editor.scss';
 
 const { __ } = wp.i18n;
 const { registerBlockType } = wp.blocks;
-const { RichText } = wp.editor;
-
+const { RichText, InnerBlocks } = wp.editor;
 import { blockProps, ContainerSave } from '../commonComponents/container/container';
+import { getTypography } from '../commonComponents/typography/typography';
 import Edit from './edit';
 
 /**
@@ -162,8 +156,9 @@ export const getStyles = attributes => {
 
     const vars = {
         '--paddings': `${ attributes.containerPadding }`,
-        '--paddingsMin': `${ attributes.containerPadding / 4 }`,
-        '--paddingsMinPx': `${ attributes.containerPadding / 4 }px`,
+        '--paddings2': `${ attributes.containerSidePadding }px`,
+        // '--paddingsMin': `${ attributes.containerPadding / 4 }`,
+        // '--paddingsMinPx': `${ attributes.containerPadding / 4 }px`,
         '--blueColor': attributes.blueColor,
         '--textColorBestSeller': attributes.textColorBestSeller,
     };
@@ -173,6 +168,77 @@ export const getStyles = attributes => {
         kenzapContanerStyles,
     };
 };
+
+/**
+ * Define typography defaults
+ */
+export const typographyArr = JSON.stringify([
+    {
+        'title': __( '- Tabs', 'kenzap-pricing' ),
+        'font-size': 16,
+        'font-weight': 5,
+        'line-height': 27,
+        //'margin-bottom': 30,
+        'padding-top': 8,
+        'padding-right': 31,
+        'padding-bottom': 8,
+        'padding-left': 31,
+        'color': '-',
+    },
+    {
+        'title': __( '- Title', 'kenzap-pricing' ),
+        'font-size': 24,
+        'font-weight': 7,
+        'line-height': 28,
+        'margin-bottom': 25,
+        'color': '-',
+    },
+    {
+        'title': __( '- Currency', 'kenzap-pricing' ),
+        'font-size': 32,
+        'font-weight': 7,
+        //'line-height': 20,
+        'color': '-',
+    },
+    {
+        'title': __( '- Price', 'kenzap-pricing' ),
+        'font-size': 48,
+        'font-weight': 7,
+        'line-height': 60,
+        'color': '-',
+    },
+    {
+        'title': __( '- Period', 'kenzap-pricing' ),
+        'font-size': 21,
+        'font-weight': 4,
+        'line-height': 0,
+        'color': '-',
+    },
+    {
+        'title': __( '- Features', 'kenzap-pricing' ),
+        'font-size': 18,
+        'font-weight': 4,
+        'line-height': 32,
+        'color': '-',
+        //'text-align': '-',
+    },
+    {
+        'title': __( '- Button', 'kenzap-pricing' ),
+        //'type': 'button',
+        'font-size': 16,
+        'font-weight': 4,
+        'line-height': 55,
+        'padding-top': 0,
+        'padding-right': 51,
+        'padding-bottom': 0,
+        'padding-left': 51,
+        'color': '-',
+        // 'background-color': '#850202',
+        // 'border-width': 2,
+        // 'hover-color': '#850202',
+        // 'hover-background-color': '#ffffff',
+    },
+]);
 
 /**
  * Register: a Gutenberg Block.
@@ -196,12 +262,20 @@ registerBlockType( 'kenzap/pricing-3', {
     ],
     anchor: true,
     html: true,
+    supports: {
+        align: [ 'full', 'wide' ],
+    },
     attributes: {
         ...blockProps,
 
-        backgroundColor: {
+        // backgroundColor: {
+        //     type: 'string',
+        //     default: '#f8fafe',
+        // },
+
+        align: {
             type: 'string',
-            default: '#f8fafe',
+            default: 'full',
         },
 
         iconSize: {
@@ -221,12 +295,12 @@ registerBlockType( 'kenzap/pricing-3', {
 
         textColor: {
             type: 'string',
-            default: '#192225',
+            //default: '#192225',
         },
 
         textColorBestSeller: {
             type: 'string',
-            default: '#fff',
+            //default: '#fff',
         },
 
         blueColor: {
@@ -255,6 +329,11 @@ registerBlockType( 'kenzap/pricing-3', {
         },
 
         items: {
+            type: 'array',
+            default: [],
+        },
+
+        typography: {
             type: 'array',
             default: [],
         },
@@ -293,6 +372,10 @@ registerBlockType( 'kenzap/pricing-3', {
             props.setAttributes( {
                 items: [ ...JSON.parse( defaultSubBlocks ) ],
                 itemsBusiness: [ ...JSON.parse( defaultBusinessSubBlocks ) ],
+                backgroundColor: '#f8fafe',
+                textColor: '#192225',
+                textColorBestSeller:'#fff',
+                containerMaxWidth: '1200',
                 isFirstLoad: false,
             } );
             props.attributes.items = JSON.parse( defaultSubBlocks );
@@ -341,9 +424,10 @@ registerBlockType( 'kenzap/pricing-3', {
                                 tagName="h3"
                                 value={ item.title }
                                 style={ {
+                                    ...getTypography( attributes, 1 ), 
                                     color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.textColor,
-                                    fontSize: `${ attributes.titleSize }px`,
-                                    lineHeight: `${ attributes.titleSize * 1.17 }px`,
+                                    // fontSize: `${ attributes.titleSize }px`,
+                                    // lineHeight: `${ attributes.titleSize * 1.17 }px`,
                                 } }
                             />
                             { attributes.iconSize > 0 &&
@@ -359,28 +443,30 @@ registerBlockType( 'kenzap/pricing-3', {
                                 } }
                                 className="kp-price"
                             >
-                                <sup style={ { color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor } }>{ item.currency }</sup>
-                                { item.price }
-                                <sub style={ { color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor } }>/{ item.period }</sub>
+                                <sup style={ { ...getTypography( attributes, 2 ), color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor } }>{ item.currency }</sup>
+                                <span style={ { ...getTypography( attributes, 3 ) } } >{ item.price }</span>
+                                <sub style={ { ...getTypography( attributes, 4 ), color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.blueColor } }>/{ item.period }</sub>
                             </strong>
 
                             <RichText.Content
                                 tagName="ul"
                                 value={ item.subDescription }
                                 style={ {
+                                    ...getTypography( attributes, 5 ),
                                     color: bestSellerBlock === index + 1 ? attributes.textColorBestSeller : attributes.textColor,
-                                    fontSize: `${ attributes.listDescriptionSize }px`,
+                                    //fontSize: `${ attributes.listDescriptionSize }px`,
                                 } }
                             />
                             <a
                                 href={ item.buttonUrl ? item.buttonUrl : 'javascript:;' }
                                 target={ item.buttonUrlTarget ? '_blank' : '_self' }
                                 style={ {
-
+                                    ...getTypography( attributes, 6 ),
                                     '--blueColor': attributes.blueColor,
                                     borderRadius: attributes.buttonBorderRadius,
                                 } }
                                 className={ ` kp-link ${ bestSellerBlock === index + 1 ? 'inverse' : attributes.blueColor }` }
+                                rel="noopener noreferrer"
                             >
                                 { item.buttonText }
                             </a>
@@ -400,6 +486,7 @@ registerBlockType( 'kenzap/pricing-3', {
                     withPadding
                 >
                     <div className="kenzap-container" style={ kenzapContanerStyles }>
+                        { attributes.nestedBlocks == 'top' && <InnerBlocks.Content /> }
                         <div className="kp-pricing-table">
                             { attributes.isFilterShow &&
                                 <div className="tabs-nav" style={ { background: attributes.blueColor } }>
@@ -423,6 +510,7 @@ registerBlockType( 'kenzap/pricing-3', {
                             </div>
 
                         </div>
+                        { attributes.nestedBlocks == 'bottom' && <InnerBlocks.Content /> }
                     </div>
                 </ContainerSave>
             </div>

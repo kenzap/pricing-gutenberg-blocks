@@ -1,19 +1,11 @@
 
-const { __ } = wp.i18n; // Import __() from wp.i18n
+const { __ } = wp.i18n;
 const { Component } = wp.element;
-const { RichText, InspectorControls, PanelColorSettings } = wp.editor;
-const { RangeControl, PanelBody, Popover, TextControl, ToggleControl, Button, ButtonGroup, BaseControl, CheckboxControl } = wp.components;
-
-import { defaultItem, getStyles } from './block';
-
+const { RichText, InspectorControls, PanelColorSettings, InnerBlocks } = wp.editor;
+const { RangeControl, PanelBody, Popover, TextControl, ToggleControl, Button, ButtonGroup, BaseControl } = wp.components;
+import { getStyles, typographyArr } from './block';
 import { InspectorContainer, ContainerEdit } from '../commonComponents/container/container';
-import { Plus } from '../commonComponents/icons/plus';
-
-/**
- * Keys for new blocks
- * @type {number}
- */
-const key = 0;
+import { TypographyContainer, getTypography } from '../commonComponents/typography/typography';
 
 /**
  * The edit function describes the structure of your block in the context of the editor.
@@ -84,56 +76,11 @@ export default class Edit extends Component {
                             </ButtonGroup>
                         </BaseControl>
                         }
-                        <RangeControl
-                            label={ __( 'Title size', 'kenzap-pricing' ) }
-                            value={ attributes.organizationSize }
-                            onChange={ ( organizationSize ) => setAttributes( { organizationSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
-                        <RangeControl
-                            label={ __( 'Table Description size', 'kenzap-pricing' ) }
-                            value={ attributes.descriptionSize }
-                            onChange={ ( descriptionSize ) => setAttributes( { descriptionSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
-                        <RangeControl
-                            label={ __( 'Table Title Size', 'kenzap-pricing' ) }
-                            value={ attributes.cardTitleSize }
-                            onChange={ ( cardTitleSize ) => setAttributes( { cardTitleSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
-
-                        <RangeControl
-                            label={ __( 'Table Subtitle Size', 'kenzap-pricing' ) }
-                            value={ attributes.periodSize }
-                            onChange={ ( periodSize ) => setAttributes( { periodSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
-
-                        <RangeControl
-                            label={ __( 'Description Size', 'kenzap-pricing' ) }
-                            value={ attributes.listDescriptionSize }
-                            onChange={ ( listDescriptionSize ) => setAttributes( { listDescriptionSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
 
                         <RangeControl
                             label={ __( 'Table Border', 'kenzap-pricing' ) }
                             value={ attributes.cardBorderRadius }
                             onChange={ ( cardBorderRadius ) => setAttributes( { cardBorderRadius } ) }
-                            min={ 0 }
-                            max={ 100 }
-                        />
-
-                        <RangeControl
-                            label={ __( 'Button Border', 'kenzap-pricing' ) }
-                            value={ attributes.buttonBorderRadius }
-                            onChange={ ( buttonBorderRadius ) => setAttributes( { buttonBorderRadius } ) }
                             min={ 0 }
                             max={ 100 }
                         />
@@ -145,55 +92,19 @@ export default class Edit extends Component {
                         initialOpen={ false }
                         colorSettings={ [
                             {
-                                value: attributes.titleColor,
-                                onChange: ( titleColor ) => {
-                                    return setAttributes( { titleColor } );
-                                },
-                                label: __( 'Title', 'kenzap-pricing' ),
-                            },
-                            {
-                                value: attributes.organizationColor,
-                                onChange: ( organizationColor ) => {
-                                    return setAttributes( { organizationColor } );
-                                },
-                                label: __( 'Organization', 'kenzap-pricing' ),
-                            },
-                            {
-                                value: attributes.descriptionColor,
-                                onChange: ( descriptionColor ) => {
-                                    return setAttributes( { descriptionColor } );
-                                },
-                                label: __( 'Description', 'kenzap-pricing' ),
-                            },
-                            {
                                 value: attributes.cardBackgroundColor,
                                 onChange: ( cardBackgroundColor ) => {
                                     return setAttributes( { cardBackgroundColor } );
                                 },
-                                label: __( 'Table Background', 'kenzap-pricing' ),
-                            },
-                            {
-                                value: attributes.textColor,
-                                onChange: ( value ) => {
-                                    return setAttributes( { textColor: value } );
-                                },
-                                label: __( 'Table Text Color', 'kenzap-pricing' ),
-                            },
-                            {
-                                value: attributes.periodColor,
-                                onChange: ( periodColor ) => {
-                                    return setAttributes( { periodColor } );
-                                },
-                                label: __( 'Period card color', 'kenzap-pricing' ),
-                            },
-                            {
-                                value: attributes.gradientColor,
-                                onChange: ( gradientColor ) => {
-                                    return setAttributes( { gradientColor } );
-                                },
-                                label: __( 'Active price type and hover button color', 'kenzap-pricing' ),
+                                label: __( 'Table', 'kenzap-pricing' ),
                             },
                         ] }
+                    />
+
+                    <TypographyContainer
+                        setAttributes={ setAttributes }
+                        typographyArr={ typographyArr }
+                        { ...attributes }
                     />
 
                     <InspectorContainer
@@ -203,39 +114,38 @@ export default class Edit extends Component {
                         withWidth100
                         withBackground
                         withAutoPadding
+                        withNested
                     />
                 </InspectorControls>
                 <div className={ className ? className : '' } style={ vars }>
                     <ContainerEdit
-                        className={ `kenzap-pricing-4 ${ attributes.containerMaxWidth < 480 ? 'kenzap-xs' : 'kenzap-sm' } block-${ attributes.blockUniqId } block-${ attributes.blockUniqId } ${ isSelected ? 'selected' : '' } ` }
+                        className={ `kenzap-pricing-4 block-${ attributes.blockUniqId } block-${ attributes.blockUniqId } ${ isSelected ? 'selected' : '' } ` }
                         attributes={ attributes }
                         withBackground
                         withPadding
                     >
                         <div className="kenzap-container" style={ kenzapContanerStyles }>
+                            { attributes.nestedBlocks == 'top' && <InnerBlocks /> }
                             <div className="kp-pricing-table">
                                 <div className="kenzap-row">
                                     <div className="kenzap-col-6">
-                                        <h2>
+                                        <h2
+                                            style={ { ...getTypography( attributes, 1, "margin-top" ), ...getTypography( attributes, 1, "margin-bottom" ) } }
+                                            >
                                             <RichText
-                                                tagName="span"
+                                                tagName="div"
                                                 placeholder={ __( 'Organization', 'kenzap-pricing' ) }
                                                 value={ attributes.organization }
                                                 onChange={ ( organization ) => setAttributes( { organization } ) }
                                                 className="organization"
-                                                style={ {
-                                                    fontSize: `${ attributes.organizationSize }px`,
-                                                    color: attributes.organizationColor,
-                                                } }
+                                                style={ getTypography( attributes, 0 ) }
                                             />
                                             <RichText
                                                 tagName="span"
                                                 placeholder={ __( 'Title', 'kenzap-pricing' ) }
                                                 value={ attributes.title }
                                                 onChange={ ( title ) => setAttributes( { title } ) }
-                                                style={ {
-                                                    color: attributes.titleColor,
-                                                } }
+                                                style={ getTypography( attributes, 1 ) }
                                             />
                                         </h2>
                                         <RichText
@@ -243,10 +153,7 @@ export default class Edit extends Component {
                                             placeholder={ __( 'Description', 'kenzap-pricing' ) }
                                             value={ attributes.description }
                                             onChange={ ( description ) => setAttributes( { description } ) }
-                                            style={ {
-                                                fontSize: `${ attributes.descriptionSize }px`,
-                                                color: attributes.descriptionColor,
-                                            } }
+                                            style={ getTypography( attributes, 2 ) }
                                         />
                                         { attributes.isFilterShow &&
                                         <div className="tabs-nav">
@@ -254,9 +161,7 @@ export default class Edit extends Component {
                                                 <li className={ `${ this.state.activePeriod === 'monthly' ? 'active' : '' }` }>
                                                     <a
                                                         href="#"
-                                                        style={ {
-                                                            borderRadius: attributes.buttonBorderRadius,
-                                                        } }
+                                                        style={ getTypography( attributes, 3 ) }
                                                     >
                                                         <input
                                                             value={ attributes.tableTypes.individual }
@@ -266,7 +171,7 @@ export default class Edit extends Component {
                                                                 items.individual = value;
                                                                 setAttributes( { tableTypes: items } );
                                                             } }
-                                                            placeholder={ __( 'Table type', 'kenzap-pricing' ) }
+                                                            placeholder={ __( 'Current table', 'kenzap-pricing' ) }
                                                             style={ {
                                                                 width: ( attributes.tableTypes.individual.length === 0 ? 10 : attributes.tableTypes.individual.length ) * 10,
                                                             } }
@@ -276,9 +181,7 @@ export default class Edit extends Component {
                                                 <li className={ `${ this.state.activePeriod === 'yearly' ? 'active' : '' }` }>
                                                     <a
                                                         href="#"
-                                                        style={ {
-                                                            borderRadius: attributes.buttonBorderRadius,
-                                                        } }
+                                                        style={ getTypography( attributes, 3 ) }
                                                     >
                                                         <input
                                                             value={ attributes.tableTypes.business }
@@ -319,10 +222,7 @@ export default class Edit extends Component {
                                                                 placeholder={ __( 'Title', 'kenzap-pricing' ) }
                                                                 value={ item.title }
                                                                 onChange={ ( value ) => this.onChangePropertyItem( 'title', value, index, true ) }
-                                                                style={ {
-                                                                    color: attributes.textColor,
-                                                                    fontSize: `${ attributes.cardTitleSize }px`,
-                                                                } }
+                                                                style={ getTypography( attributes, 4 ) }
                                                             />
                                                             <RichText
                                                                 tagName="span"
@@ -330,11 +230,7 @@ export default class Edit extends Component {
                                                                 value={ item.period }
                                                                 onChange={ ( value ) => this.onChangePropertyItem( 'period', value, index, true ) }
                                                                 className="period"
-                                                                style={ {
-                                                                    color: attributes.periodColor,
-                                                                    fontSize: `${ attributes.periodSize }px`,
-                                                                    lineHeight: `${ attributes.periodSize * 1.9 }px`,
-                                                                } }
+                                                                style={ getTypography( attributes, 5 ) }
                                                             />
                                                         </h3>
 
@@ -352,10 +248,7 @@ export default class Edit extends Component {
                                                                     this.onChangePropertyItem( 'price', value, index, true );
                                                                 } }
                                                                 placeholder={ __( '$86', 'kenzap-pricing' ) }
-                                                                style={ {
-                                                                    width: `${ ( item.price.length === 0 ? 3 : item.price.length ) * 35 }px`,
-                                                                    color: attributes.textColor,
-                                                                } }
+                                                                style={ { ...getTypography( attributes, 6 ), "width": `${ ( item.price.length === 0 ? 3 : item.price.length ) * 40 }px` } }
                                                             />
                                                             <sup>
                                                                 <input
@@ -365,10 +258,7 @@ export default class Edit extends Component {
                                                                         this.onChangePropertyItem( 'cents', value, index, true );
                                                                     } }
                                                                     placeholder={ __( '.99', 'kenzap-pricing' ) }
-                                                                    style={ {
-                                                                        width: `${ ( item.cents.length === 0 ? 3 : item.cents.length ) * 22.5 }px`,
-                                                                        color: attributes.textColor,
-                                                                    } }
+                                                                    style={ { ...getTypography( attributes, 7 ), "width": `${ ( item.price.length === 0 ? 3 : item.price.length ) * 23 }px` } }
                                                                 />
                                                             </sup>
                                                         </strong>
@@ -378,18 +268,13 @@ export default class Edit extends Component {
                                                             value={ item.subDescription }
                                                             onChange={ ( value ) => this.onChangePropertyItem( 'subDescription', value, index, true ) }
                                                             multiline="li"
-                                                            style={ {
-                                                                color: attributes.textColor,
-                                                                fontSize: `${ attributes.listDescriptionSize }px`,
-                                                                lineHeight: `${ attributes.listDescriptionSize * 2.35 }px`,
-                                                            } }
+                                                            style={ getTypography( attributes, 8 ) }
                                                         />
                                                         <a
                                                             onClick={ () => this.setState( { isButtonPopupVisibleIndex: index } ) }
                                                             className="kp-link"
-                                                            style={ {
-                                                                borderRadius: attributes.buttonBorderRadius,
-                                                            } }
+                                                            style={ getTypography( attributes, 9 ) }
+                                                            rel="noopener noreferrer"
                                                         >
                                                             <input
                                                                 value={ item.ctaText }
@@ -435,6 +320,7 @@ export default class Edit extends Component {
                                     </div>
                                 </div>
                             </div>
+                            { attributes.nestedBlocks == 'bottom' && <InnerBlocks /> }
                         </div>
                     </ContainerEdit>
                 </div>

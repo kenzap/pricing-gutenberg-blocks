@@ -1,18 +1,11 @@
-/**
- * BLOCK: pricing-6
- *
- */
-
-//  Import CSS.
 import './style.scss';
 import './editor.scss';
 
 const { __ } = wp.i18n;
 const { registerBlockType } = wp.blocks;
-const { RichText } = wp.editor;
-const { Fragment } = wp.element;
-
+const { RichText, InnerBlocks } = wp.editor;
 import { blockProps, ContainerSave } from '../commonComponents/container/container';
+import { getTypography } from '../commonComponents/typography/typography';
 import Edit from './edit';
 
 /**
@@ -27,61 +20,61 @@ export const defaultItem = {
 export const defaultSubBlocks = JSON.stringify( [
     {
         title: __( 'Ceasar Salad', 'kenzap-pricing' ),
-        description: __( 'with village chicken or bacon', 'kenzap-pricing' ),
+        description: __( '<em>with village chicken or bacon</em>', 'kenzap-pricing' ),
         price: '3.30',
         key: new Date().getTime() + 1,
     },
     {
         title: __( 'Pizza Margarita', 'kenzap-pricing' ),
-        description: __( 'with homemade tomatoe pasta' ),
+        description: __( '<em>with homemade tomatoe pasta</em>' ),
         price: '5.00',
         key: new Date().getTime() + 2,
     },
     {
         title: __( 'Minestrone', 'kenzap-pricing' ),
-        description: __( 'with homefries' ),
+        description: __( '<em>with homefries</em>' ),
         price: '4.20',
         key: new Date().getTime() + 3,
     },
     {
         title: __( 'Gnocchi', 'kenzap-pricing' ),
-        description: __( 'with homefries' ),
+        description: __( '<em>with homefries</em>' ),
         price: '10.00',
         key: new Date().getTime() + 4,
     },
     {
         title: __( 'Eggplant Parmigianno', 'kenzap-pricing' ),
-        description: __( 'with “soldiers”' ),
+        description: __( '<em>with “soldiers”</em>' ),
         price: '12.50',
         key: new Date().getTime() + 5,
     },
     {
         title: __( 'Pasta Carbonara', 'kenzap-pricing' ),
-        description: __( 'with “soldiers”' ),
+        description: __( '<em>with “soldiers”</em>' ),
         price: '8.00',
         key: new Date().getTime() + 6,
     },
     {
         title: __( 'Pasto Bolognese', 'kenzap-pricing' ),
-        description: __( 'with homefries & toast' ),
+        description: __( '<em>with homefries & toast</em>' ),
         price: '9.00',
         key: new Date().getTime() + 7,
     },
     {
         title: __( 'Sunny Side up Eggs', 'kenzap-pricing' ),
-        description: __( 'with fresh lettuce and avocado' ),
+        description: __( '<em>with fresh lettuce and avocado</em>' ),
         price: '12.00',
         key: new Date().getTime() + 8,
     },
     {
         title: __( 'Eggs Benedict', 'kenzap-pricing' ),
-        description: __( 'with french fries' ),
+        description: __( '<em>with french fries</em>' ),
         price: '11.00',
         key: new Date().getTime() + 9,
     },
     {
         title: __( 'Fish & Chips', 'kenzap-pricing' ),
-        description: __( 'with french fries' ),
+        description: __( '<em>with french fries</em>' ),
         price: '22.00',
         key: new Date().getTime() + 10,
     },
@@ -100,16 +93,50 @@ export const getStyles = attributes => {
 
     const vars = {
         '--paddings': `${ attributes.containerPadding }`,
-        '--paddingsMin': `${ attributes.containerPadding / 4 }`,
-        '--paddingsMinPx': `${ attributes.containerPadding / 4 }px`,
-        '--textColor': attributes.textColor,
+        '--paddings2': `${ attributes.containerSidePadding }px`,
+        // '--paddingsMin': `${ attributes.containerPadding / 4 }`,
+        // '--paddingsMinPx': `${ attributes.containerPadding / 4 }px`,
+        //'--backgroundColor': `${ attributes.backgroundColor }`,
+        //'--backgroundColor': `${ attributes.backgroundColor }`,
+        //'--textColor': attributes.textColor,
     };
+
+    if(attributes.titleColor) vars['--titleColor'] = `${ attributes.titleColor }`;
+    if(attributes.backgroundColor) vars['--backgroundColor'] = `${ attributes.backgroundColor }`;
 
     return {
         vars,
         kenzapContanerStyles,
     };
 };
+
+/**
+ * Define typography defaults
+ */
+export const typographyArr = JSON.stringify([
+    {
+        'title': __( '- Title', 'kenzap-pricing' ),
+        'font-size': 29,
+        'font-weight': 4,
+        'line-height': 34,
+        'margin-bottom': 0,
+        'color': '#ffffff',
+    },
+    {
+        'title': __( '- Description', 'kenzap-pricing' ),
+        'font-size': 14,
+        'font-weight': 4,
+        'line-height': 25,
+        'color': '#cbd7e3',
+    },
+    {
+        'title': __( '- Price', 'kenzap-pricing' ),
+        'font-size': 14,
+        'font-weight': 4,
+        'line-height': 25,
+        'color': '#cbd7e3',
+    },
+]);
 
 /**
  * Register: a Gutenberg Block.
@@ -133,12 +160,20 @@ registerBlockType( 'kenzap/pricing-6', {
     ],
     anchor: true,
     html: true,
+    supports: {
+        align: [ 'full', 'wide' ],
+    },
     attributes: {
         ...blockProps,
 
         backgroundColor: {
             type: 'string',
-            default: '#222023',
+           // default: '#222023',
+        },
+
+        titleColor: {
+            type: 'string',
+           // default: '#222023',
         },
 
         titleSize: {
@@ -151,22 +186,17 @@ registerBlockType( 'kenzap/pricing-6', {
             default: 16,
         },
 
-        titleColor: {
-            type: 'string',
-            default: '#fff',
-        },
-
-        textColor: {
-            type: 'string',
-            default: '#cbd7e3',
-        },
-
         isTwoColumn: {
             type: 'boolean',
             default: false,
         },
 
         items: {
+            type: 'array',
+            default: [],
+        },
+
+        typography: {
             type: 'array',
             default: [],
         },
@@ -187,8 +217,10 @@ registerBlockType( 'kenzap/pricing-6', {
             props.setAttributes( {
                 items: [ ...JSON.parse( defaultSubBlocks ) ],
                 isFirstLoad: false,
+                backgroundColor: '#222023',
+                titleColor: '#ccc',
             } );
-            // TODO It is very bad solution to avoid low speed working of setAttributes function
+
             props.attributes.items = JSON.parse( defaultSubBlocks );
             if ( ! props.attributes.blockUniqId ) {
                 props.setAttributes( {
@@ -226,6 +258,7 @@ registerBlockType( 'kenzap/pricing-6', {
                     withPadding
                 >
                     <div className="kenzap-container" style={ kenzapContanerStyles }>
+                        { attributes.nestedBlocks == 'top' && <InnerBlocks.Content /> }
                         <div className="kp-pricing-table">
                             { attributes.isTwoColumn ? (
                                 <div className="kenzap-row">
@@ -238,29 +271,33 @@ registerBlockType( 'kenzap/pricing-6', {
                                                 <RichText.Content
                                                     tagName="h3"
                                                     value={ item.title }
-                                                    style={ {
-                                                        color: attributes.titleColor,
-                                                        fontSize: `${ attributes.titleSize }px`,
-                                                    } }
+                                                    style={ getTypography( attributes, 0 ) }
+                                                    // style={ {
+                                                    //     color: attributes.titleColor,
+                                                    //     fontSize: `${ attributes.titleSize }px`,
+                                                    // } }
                                                 />
-                                                <p style={ { color: attributes.textColor } }>
+                                                <p //style={ { color: attributes.textColor } }
+                                                >
                                                     <RichText.Content
                                                         tagName="span"
                                                         value={ item.description }
-                                                        style={ {
-                                                            color: attributes.textColor,
-                                                            fontSize: `${ attributes.descriptionSize }px`,
-                                                            backgroundColor: attributes.backgroundColor,
-                                                        } }
+                                                        style={ getTypography( attributes, 1 ) }
+                                                        // style={ {
+                                                        //     color: attributes.textColor,
+                                                        //     fontSize: `${ attributes.descriptionSize }px`,
+                                                        //     backgroundColor: attributes.backgroundColor,
+                                                        // } }
                                                     />
                                                     <RichText.Content
                                                         tagName="span"
                                                         value={ item.price }
-                                                        style={ {
-                                                            color: attributes.textColor,
-                                                            fontSize: `${ attributes.descriptionSize }px`,
-                                                            backgroundColor: attributes.backgroundColor,
-                                                        } }
+                                                        style={ getTypography( attributes, 2 ) }
+                                                        // style={ {
+                                                        //     color: attributes.textColor,
+                                                        //     fontSize: `${ attributes.descriptionSize }px`,
+                                                        //     backgroundColor: attributes.backgroundColor,
+                                                        // } }
                                                     />
                                                 </p>
                                             </div>
@@ -275,35 +312,40 @@ registerBlockType( 'kenzap/pricing-6', {
                                     <RichText.Content
                                         tagName="h3"
                                         value={ item.title }
-                                        style={ {
-                                            color: attributes.titleColor,
-                                            fontSize: `${ attributes.titleSize }px`,
-                                        } }
+                                        style={ getTypography( attributes, 0 ) }
+                                        // style={ {
+                                        //     color: attributes.titleColor,
+                                        //     fontSize: `${ attributes.titleSize }px`,
+                                        // } }
                                     />
-                                    <p style={ { color: attributes.textColor } }>
+                                    <p //style={ { color: attributes.textColor } }
+                                    >
                                         <RichText.Content
                                             tagName="span"
                                             value={ item.description }
-                                            style={ {
-                                                color: attributes.textColor,
-                                                fontSize: `${ attributes.descriptionSize }px`,
-                                                backgroundColor: attributes.backgroundColor,
-                                            } }
+                                            style={ getTypography( attributes, 1 ) }
+                                            // style={ {
+                                            //     color: attributes.textColor,
+                                            //     fontSize: `${ attributes.descriptionSize }px`,
+                                            //     backgroundColor: attributes.backgroundColor,
+                                            // } }
                                         />
                                         <RichText.Content
                                             tagName="span"
                                             value={ item.price }
-                                            style={ {
-                                                color: attributes.textColor,
-                                                fontSize: `${ attributes.descriptionSize }px`,
-                                                backgroundColor: attributes.backgroundColor,
-                                            } }
+                                            style={ getTypography( attributes, 2 ) }
+                                            // style={ {
+                                            //     color: attributes.textColor,
+                                            //     fontSize: `${ attributes.descriptionSize }px`,
+                                            //     backgroundColor: attributes.backgroundColor,
+                                            // } }
                                         />
                                     </p>
                                 </div>
                             ) )
                             }
                         </div>
+                        { attributes.nestedBlocks == 'bottom' && <InnerBlocks.Content /> }
                     </div>
                 </ContainerSave>
             </div>

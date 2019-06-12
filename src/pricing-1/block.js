@@ -1,17 +1,11 @@
-/**
- * BLOCK: pricing-1
- *
- */
-
-//  Import CSS.
 import './style.scss';
 import './editor.scss';
 
 const { __ } = wp.i18n;
 const { registerBlockType } = wp.blocks;
-const { RichText } = wp.editor;
-
+const { RichText, InnerBlocks } = wp.editor;
 import { blockProps, ContainerSave } from '../commonComponents/container/container';
+import { getTypography } from '../commonComponents/typography/typography';
 import Edit from './edit';
 
 /**
@@ -109,8 +103,9 @@ export const getStyles = attributes => {
 
     const vars = {
         '--paddings': `${ attributes.containerPadding }`,
-        '--paddingsMin': `${ attributes.containerPadding / 4 }`,
-        '--paddingsMinPx': `${ attributes.containerPadding / 4 }px`,
+        '--paddings2': `${ attributes.containerSidePadding }px`,
+        // '--paddingsMin': `${ attributes.containerPadding / 4 }`,
+        // '--paddingsMinPx': `${ attributes.containerPadding / 4 }px`,
     };
 
     return {
@@ -118,6 +113,57 @@ export const getStyles = attributes => {
         kenzapContanerStyles,
     };
 };
+
+/**
+ * Define typography defaults
+ */
+export const typographyArr = JSON.stringify([
+    {
+        'title': __( '- Title', 'kenzap-timeline' ),
+        'font-size': 22,
+        'font-weight': 6,
+        'line-height': 24,
+        'margin-bottom': 12,
+        'color': '-',
+    },
+    {
+        'title': __( '- Description', 'kenzap-timeline' ),
+        'font-size': 15,
+        'font-weight': 4,
+        'line-height': 26,
+        'margin-bottom': 15,
+        'padding-left': 60,
+        'padding-right': 60,
+    },
+    {
+        'title': __( '- Price', 'kenzap-timeline' ),
+        'font-size': 55,
+        'font-weight': 4,
+        'line-height': 66,
+        'margin-top': 22,
+        'margin-bottom': 22,
+        'padding-top': 30,
+        'padding-bottom': 30,
+    },
+    {
+        'title': __( '- List', 'kenzap-timeline' ),
+        'font-size': 15,
+        'font-weight': 4,
+        'line-height': 26,
+        'padding-bottom': 30,
+    },
+    {
+        'title': __( '- Button', 'kenzap-timeline' ),
+        'type': 'button',
+        'font-size': 15,
+        'font-weight': 5,
+        'line-height': 24,
+        'padding-top': 15,
+        'padding-right': 35,
+        'padding-bottom': 15,
+        'padding-left': 35,
+    },
+]);
 
 /**
  * Register: a Gutenberg Block.
@@ -142,27 +188,20 @@ registerBlockType( 'kenzap/pricing-1', {
     ],
     anchor: true,
     html: true,
+    supports: {
+        align: [ 'full', 'wide' ],
+    },
     attributes: {
         ...blockProps,
+
+        align: {
+            type: 'string',
+            default: 'full',
+        },
 
         backgroundColor: {
             type: 'string',
             default: '#1b3795',
-        },
-
-        titleSize: {
-            type: 'number',
-            default: 20,
-        },
-
-        descriptionSize: {
-            type: 'number',
-            default: 15,
-        },
-
-        listDescriptionSize: {
-            type: 'number',
-            default: 15,
         },
 
         iconSize: {
@@ -175,32 +214,17 @@ registerBlockType( 'kenzap/pricing-1', {
             default: 0,
         },
 
-        buttonBorderRadius: {
-            type: 'number',
-            default: 4,
-        },
-
-        textColor: {
-            type: 'string',
-            default: '#fff',
-        },
-
-        buttonColor: {
-            type: 'string',
-            default: '#0abc5f',
-        },
-
-        buttonTextColor: {
-            type: 'string',
-            default: '#fff',
-        },
-
         bestSellerBlock: {
             type: 'number',
             default: 2,
         },
 
         items: {
+            type: 'array',
+            default: [],
+        },
+
+        typography: {
             type: 'array',
             default: [],
         },
@@ -222,7 +246,7 @@ registerBlockType( 'kenzap/pricing-1', {
                 items: [ ...JSON.parse( defaultSubBlocks ) ],
                 isFirstLoad: false,
             } );
-            // TODO It is very bad solution to avoid low speed working of setAttributes function
+
             props.attributes.items = JSON.parse( defaultSubBlocks );
             if ( ! props.attributes.blockUniqId ) {
                 props.setAttributes( {
@@ -260,6 +284,7 @@ registerBlockType( 'kenzap/pricing-1', {
                     withPadding
                 >
                     <div className="kenzap-container" style={ kenzapContanerStyles }>
+                        { attributes.nestedBlocks == 'top' && <InnerBlocks.Content /> }
                         <div className="kp-pricing-table">
                             <div className="kenzap-row">
                                 { attributes.items && attributes.items.map( ( item, index ) => (
@@ -282,51 +307,33 @@ registerBlockType( 'kenzap/pricing-1', {
                                             <RichText.Content
                                                 tagName="h3"
                                                 value={ item.title }
-                                                style={ {
-                                                    color: attributes.textColor,
-                                                    fontSize: `${ attributes.titleSize }px`,
-                                                    lineHeight: `${ attributes.titleSize * 1.4 }px`,
-                                                } }
+                                                style={ getTypography( attributes, 0 ) }
                                             />
                                             <RichText.Content
                                                 tagName="p"
                                                 value={ item.description }
-                                                style={ {
-                                                    color: attributes.textColor,
-                                                    fontSize: `${ attributes.descriptionSize }px`,
-                                                    lineHeight: `${ attributes.descriptionSize * 1.74 }px`,
-                                                } }
+                                                style={ getTypography( attributes, 1 ) }
                                             />
                                             <strong
-                                                style={ {
-                                                    lineHeight: 1.2,
-                                                    color: attributes.textColor,
-                                                } }
+                                                style={ getTypography( attributes, 2 ) }
                                                 className="kp-price"
                                             >
-                                                <sup style={ { color: attributes.textColor } }>{ item.currency }</sup>
+                                                <sup >{ item.currency }</sup>
                                                 { item.price }
-                                                <sub style={ { color: attributes.textColor } }>/{ item.period }</sub>
+                                                <sub >/{ item.period }</sub>
                                             </strong>
 
                                             <RichText.Content
                                                 tagName="ul"
                                                 value={ item.subDescription }
-                                                style={ {
-                                                    color: attributes.textColor,
-                                                    fontSize: `${ attributes.listDescriptionSize }px`,
-                                                    lineHeight: `${ attributes.listDescriptionSize * 1.74 }px`,
-                                                } }
+                                                style={ getTypography( attributes, 3 ) }
                                             />
                                             <a
                                                 href={ item.buttonUrl ? item.buttonUrl : 'javascript:;' }
                                                 target={ item.buttonUrlTarget ? '_blank' : '_self' }
-                                                style={ {
-                                                    "--bbc": attributes.buttonColor,
-                                                    "--btc": attributes.buttonTextColor,
-                                                    borderRadius: attributes.buttonBorderRadius,
-                                                } }
+                                                style={ getTypography( attributes, 4 ) }
                                                 className="kp-link"
+                                                rel="noopener noreferrer"
                                             >
                                                 <RichText.Content
                                                     value={ item.buttonText }
@@ -337,6 +344,7 @@ registerBlockType( 'kenzap/pricing-1', {
                                 ) ) }
                             </div>
                         </div>
+                        { attributes.nestedBlocks == 'bottom' && <InnerBlocks.Content /> }
                     </div>
                 </ContainerSave>
             </div>

@@ -1,11 +1,10 @@
-const { __ } = wp.i18n; // Import __() from wp.i18n
+const { __ } = wp.i18n;
 const { Component } = wp.element;
-const { RichText, InspectorControls, PanelColorSettings, MediaUpload } = wp.editor;
+const { RichText, InspectorControls, PanelColorSettings, InnerBlocks } = wp.editor;
 const { RangeControl, PanelBody, Popover, TextControl, ToggleControl } = wp.components;
-
-import { defaultItem, getStyles } from './block';
-
+import { defaultItem, getStyles, typographyArr } from './block';
 import { InspectorContainer, ContainerEdit } from '../commonComponents/container/container';
+import { TypographyContainer, getTypography } from '../commonComponents/typography/typography';
 import { Plus } from '../commonComponents/icons/plus';
 
 /**
@@ -107,21 +106,6 @@ export default class Edit extends Component {
                         initialOpen={ false }
                     >
                         <RangeControl
-                            label={ __( 'Title Size', 'kenzap-pricing' ) }
-                            value={ attributes.titleSize }
-                            onChange={ ( titleSize ) => setAttributes( { titleSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
-
-                        <RangeControl
-                            label={ __( 'Description Size', 'kenzap-pricing' ) }
-                            value={ attributes.listDescriptionSize }
-                            onChange={ ( listDescriptionSize ) => setAttributes( { listDescriptionSize } ) }
-                            min={ 10 }
-                            max={ 130 }
-                        />
-                        <RangeControl
                             label={ __( 'Featured Table', 'kenzap-pricing' ) }
                             value={ attributes.bestSellerBlock }
                             onChange={ ( bestSellerBlock ) => setAttributes( { bestSellerBlock } ) }
@@ -133,13 +117,6 @@ export default class Edit extends Component {
                             label={ __( 'Table Border', 'kenzap-pricing' ) }
                             value={ attributes.cardBorderRadius }
                             onChange={ ( cardBorderRadius ) => setAttributes( { cardBorderRadius } ) }
-                            min={ 0 }
-                            max={ 100 }
-                        />
-                        <RangeControl
-                            label={ __( 'Button Border', 'kenzap-pricing' ) }
-                            value={ attributes.buttonBorderRadius }
-                            onChange={ ( buttonBorderRadius ) => setAttributes( { buttonBorderRadius } ) }
                             min={ 0 }
                             max={ 100 }
                         />
@@ -155,21 +132,7 @@ export default class Edit extends Component {
                                 onChange: ( value ) => {
                                     return setAttributes( { textColor: value } );
                                 },
-                                label: __( 'Text', 'kenzap-pricing' ),
-                            },
-                            {
-                                value: attributes.buttonColor,
-                                onChange: ( buttonColor ) => {
-                                    return setAttributes( { buttonColor } );
-                                },
-                                label: __( 'Button', 'kenzap-pricing' ),
-                            },
-                            {
-                                value: attributes.buttonTextColor,
-                                onChange: ( buttonTextColor ) => {
-                                    return setAttributes( { buttonTextColor } );
-                                },
-                                label: __( 'Button Text', 'kenzap-pricing' ),
+                                label: __( 'Divider', 'kenzap-pricing' ),
                             },
                             {
                                 value: attributes.tableColor,
@@ -181,6 +144,12 @@ export default class Edit extends Component {
                         ] }
                     />
 
+                    <TypographyContainer
+                        setAttributes={ setAttributes }
+                        typographyArr={ typographyArr }
+                        { ...attributes }
+                    />
+
                     <InspectorContainer
                         setAttributes={ setAttributes }
                         { ...attributes }
@@ -188,16 +157,18 @@ export default class Edit extends Component {
                         withWidth100
                         withBackground
                         withAutoPadding
+                        withNested
                     />
                 </InspectorControls>
                 <div className={ className ? className : '' } style={ vars }>
                     <ContainerEdit
-                        className={ `kenzap-pricing-6 kenzap-xs block-${ attributes.blockUniqId } ${ isSelected ? 'selected' : '' } ` }
+                        className={ `kenzap-pricing-6 block-${ attributes.blockUniqId } ${ isSelected ? 'selected' : '' } ` }
                         attributes={ attributes }
                         withBackground
                         withPadding
                     >
                         <div className="kenzap-container" style={ kenzapContanerStyles }>
+                            { attributes.nestedBlocks == 'top' && <InnerBlocks /> }
                             <div className="kp-pricing-table">
                                 <div className="kenzap-row">
                                     { attributes.items && attributes.items.map( ( item, index ) => (
@@ -215,22 +186,26 @@ export default class Edit extends Component {
                                                     background: attributes.tableColor,
                                                 } }
                                             >
-                                                { attributes.bestSellerBlock === index + 1 ? <span style={ { background: attributes.buttonColor, color: attributes.buttonTextColor } } className="ribbon">{ __( 'Best', 'kenzap-pricing' ) }</span> : null }
+                                                { (attributes.bestSellerBlock === index + 1) && <RichText
+                                                    tagName="span"
+                                                    className="ribbon"
+                                                    placeholder={ __( 'Featured', 'kenzap-pricing' ) }
+                                                    value={ attributes.bestSellerBlockText }
+                                                    onChange={ ( bestSellerBlockText ) => setAttributes( { bestSellerBlockText } ) }
+                                                    style={ getTypography( attributes, 5 ) }
+                                                /> }
+
                                                 <RichText
                                                     tagName="h3"
                                                     placeholder={ __( 'Title', 'kenzap-pricing' ) }
                                                     value={ item.title }
                                                     onChange={ ( value ) => this.onChangePropertyItem( 'title', value, index, true ) }
-                                                    style={ {
-                                                        color: attributes.textColor,
-                                                        fontSize: `${ attributes.titleSize }px`,
-                                                        lineHeight: `${ attributes.titleSize * 1.4 }px`,
-                                                    } }
+                                                    style={ getTypography( attributes, 0 ) }
                                                 />
                                                 <strong
                                                     className="kp-price"
                                                     style={ {
-                                                        color: attributes.textColor,
+                                                        //color: attributes.textColor,
                                                         lineHeight: 1.25,
                                                     } }
                                                 >
@@ -242,10 +217,7 @@ export default class Edit extends Component {
                                                                 this.onChangePropertyItem( 'currency', value, index, true );
                                                             } }
                                                             placeholder={ __( '$', 'kenzap-pricing' ) }
-                                                            style={ {
-                                                                width: `${ ( item.currency.length === 0 ? 1 : item.currency.length ) * 13 }px`,
-                                                                color: attributes.textColor,
-                                                            } }
+                                                            style={ { ...getTypography( attributes, 1 ), width: `${ ( item.currency.length === 0 ? 1 : item.currency.length ) * 13 }px`}  }
                                                         />
                                                     </sup>
                                                     <input
@@ -255,22 +227,14 @@ export default class Edit extends Component {
                                                             this.onChangePropertyItem( 'price', value, index, true );
                                                         } }
                                                         placeholder={ 5 }
-                                                        style={ {
-                                                            width: `${ ( item.price.length === 0 ? 1 : item.price.length ) * 47 }px`,
-                                                            color: attributes.textColor,
-                                                        } }
+                                                        style={ { ...getTypography( attributes, 2 ), width: `${ ( item.price.length === 0 ? 1 : item.price.length ) * 47 }px` } }
                                                     />
                                                 </strong>
                                                 <ul>
                                                     { item.subItems.map( ( subItem, subItemindex ) => (
                                                         <li
                                                             key={ subItem.key }
-                                                            style={ {
-                                                                color: attributes.textColor,
-                                                                fontSize: `${ attributes.listDescriptionSize }px`,
-                                                                lineHeight: `${ attributes.listDescriptionSize * 1.74 }px`,
-                                                                position: 'relative',
-                                                            } }
+                                                            style={ getTypography( attributes, 3 ) }
                                                         >
                                                             <button className="remove" onClick={ () => {
                                                                 const subItems = item.subItems;
@@ -290,10 +254,10 @@ export default class Edit extends Component {
                                                                     this.onChangePropertyItem( 'subItems', subItems, index, true );
                                                                 } }
                                                                 placeholder={ __( 'Dolor', 'kenzap-pricing' ) }
-                                                                style={ {
+                                                                style={ { ...getTypography( attributes, 3, 'font-size' ), ...getTypography( attributes, 3, 'color' ), ...{
                                                                     width: `${ ( subItem.option.length === 0 ? 5 : subItem.option.length ) * 13 }px`,
-                                                                    color: attributes.textColor,
-                                                                } }
+                                                                    //color: attributes.textColor,
+                                                                } } }
                                                             />
 
                                                             <strong>
@@ -306,10 +270,10 @@ export default class Edit extends Component {
                                                                         this.onChangePropertyItem( 'subItems', subItems, index, true );
                                                                     } }
                                                                     placeholder={ __( 'Yes', 'kenzap-pricing' ) }
-                                                                    style={ {
+                                                                    style={ { ...getTypography( attributes, 3, 'font-size' ), ...getTypography( attributes, 3, 'color' ), ...{
                                                                         width: `${ ( subItem.availability.length === 0 ? 4 : subItem.availability.length === 2 ? subItem.availability.length + 2 : subItem.availability.length + 1 ) * 12 }px`,
-                                                                        color: attributes.textColor,
-                                                                    } }
+                                                                        //color: attributes.textColor,
+                                                                    } } }
                                                                 />
                                                             </strong>
                                                         </li>
@@ -331,11 +295,8 @@ export default class Edit extends Component {
                                                 <a
                                                     className="kp-link"
                                                     onClick={ () => this.setState( { isButtonPopupVisibleIndex: index } ) }
-                                                    style={ {
-                                                        background: attributes.buttonColor,
-                                                        borderRadius: attributes.buttonBorderRadius,
-                                                        border: `1px solid ${ attributes.buttonColor }`,
-                                                    } }
+                                                    style={ getTypography( attributes, 4 ) }
+                                                    rel="noopener noreferrer"
                                                 >
                                                     <input
                                                         value={ item.buttonText }
@@ -345,7 +306,7 @@ export default class Edit extends Component {
                                                         } }
                                                         style={ {
                                                             width: `${ item.buttonText.length * 9 }px`,
-                                                            color: attributes.buttonTextColor,
+                                                            //color: attributes.buttonTextColor,
                                                         } }
                                                     />
                                                 </a>
@@ -380,6 +341,7 @@ export default class Edit extends Component {
                                     ) ) }
                                 </div>
                             </div>
+                            { attributes.nestedBlocks == 'bottom' && <InnerBlocks /> }
                         </div>
                         { this.state.showError && <div className={ 'errorMessage errorShow' }>
                             { __( 'No more than 3 pricing tables are allowed per block.', 'kenzap-steps' ) }

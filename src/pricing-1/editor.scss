@@ -1,85 +1,84 @@
-.kenzap .components-color-palette__clear{
-  display: none;
-}
+// .kenzap .components-color-palette__clear{
+//   display: none;
+// }
 
-.kenzap .kenzap-pricing-1 :before,
-.kenzap .kenzap-pricing-1 :after,
-.kenzap .kenzap-pricing-1 *{
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
+// .kenzap .kenzap-pricing-1 :before,
+// .kenzap .kenzap-pricing-1 :after,
+// .kenzap .kenzap-pricing-1 *{
+//   -webkit-box-sizing: border-box;
+//   -moz-box-sizing: border-box;
+//   box-sizing: border-box;
+// }
 
-.kenzap .kenzap-pricing-1 img,
-.kenzap .kenzap-pricing-1 ul,
-.kenzap .kenzap-pricing-1 li,
-.kenzap .kenzap-pricing-1 p,
-.kenzap .kenzap-pricing-1 a{
-  padding: 0;
-  margin: 0;
-  box-shadow: none;
-  border: none;
-  text-decoration: none;
-  list-style:none
-}
+// .kenzap .kenzap-pricing-1 img,
+// .kenzap .kenzap-pricing-1 ul,
+// .kenzap .kenzap-pricing-1 li,
+// .kenzap .kenzap-pricing-1 p,
+// .kenzap .kenzap-pricing-1 a{
+//   padding: 0;
+//   margin: 0;
+//   box-shadow: none;
+//   border: none;
+//   text-decoration: none;
+//   list-style:none
+// }
 
-.kenzap .kenzap-pricing-1 .kenzap-container{
-  max-width:1170px;
-  padding:0 15px;
-  margin:0 auto;
-}
+// .kenzap .kenzap-pricing-1 .kenzap-container{
+//   max-width:1170px;
+//   padding:0 15px;
+//   margin:0 auto;
+// }
 
-.kenzap .kenzap-pricing-1.autoPadding {
-  padding: calc(30px + (var(--paddings) - 30) * ((100vw - 300px) / (1600 - 300))) 0;
-}
+// .kenzap .kenzap-pricing-1.autoPadding {
+//   padding: calc(30px + (var(--paddings) - 30) * ((100vw - 300px) / (1600 - 300))) 0;
+// }
 
-.kenzap .kenzap-pricing-1 .kenzap-row{
-  margin:0 -15px;
-  overflow:hidden;
-}
+// .kenzap .kenzap-pricing-1 .kenzap-row{
+//   margin:0 -15px;
+//   overflow:hidden;
+// }
 
-.kenzap .kenzap-pricing-1 .kenzap-col-4{
-  width:33.33333%;
-  float:left;
-  padding:0 15px;
-  position: relative;
-}
+// .kenzap .kenzap-pricing-1 .kenzap-col-4{
+//   width:33.33333%;
+//   float:left;
+//   padding:0 15px;
+//   position: relative;
+// }
 
-.kenzap .kenzap-pricing-1{
-  background:#1b3795;
-  padding:85px 0;
-}
+// .kenzap .kenzap-pricing-1{
+//   background:#1b3795;
+//   padding:85px 0;
+// }
 
-.kenzap .kenzap-pricing-1 .pricing-box{
-  padding:50px 20px 60px 20px;
-  text-align:center
-}
+// .kenzap .kenzap-pricing-1 .pricing-box{
+//   padding:50px 20px 60px 20px;
+//   text-align:center
+// }
 
-.kenzap .kenzap-pricing-1 .pricing-box.best-seller{
-  background: rgba(0,0,0,0.2);
-}
+// .kenzap .kenzap-pricing-1 .pricing-box.best-seller{
+//   background: rgba(0,0,0,0.2);
+// }
 
-.kenzap .kenzap-pricing-1 .pricing-box img{
-  margin:0 auto 30px;
-}
+// .kenzap .kenzap-pricing-1 .pricing-box img{
+//   margin:0 auto 30px;
+// }
 
-.kenzap .kenzap-pricing-1 .pricing-box h3{
-  text-transform: uppercase;
-  margin:0 0 12px;
-  font-weight: 500;
-  font-size: 20px;
-  color: #fff;
-  line-height: 28px;
-}
+// .kenzap .kenzap-pricing-1 .pricing-box h3{
+//   margin:0 0 12px;
+//   font-weight: 500;
+//   font-size: 20px;
+//   color: #fff;
+//   line-height: 28px;
+// }
 
-.kenzap .kenzap-pricing-1 .pricing-box p{
-  margin: 0 0 15px;
-  padding:0 60px;
-  font-weight: 400;
-  font-size: 15px;
-  color: #fff;
-  line-height: 26px;
-}
+// .kenzap .kenzap-pricing-1 .pricing-box p{
+//   margin: 0 0 15px;
+//   padding:0 60px;
+//   font-weight: 400;
+//   font-size: 15px;
+//   color: #fff;
+//   line-height: 26px;
+// }
 
 .kenzap .kenzap-pricing-1 .pricing-box .kp-price{
   display:block;
@@ -192,7 +191,6 @@
   padding: 14px 35px 11px 35px;
   background: #0abc5f;
   border-radius: 4px;
-  text-transform: uppercase;
   font-weight: 500;
   font-size: 15px;
   color: #fff;
@@ -204,10 +202,8 @@
     display:inline-block;
     padding: 14px 35px 11px 35px;
     border-radius: 4px;
-    text-transform: uppercase;
     line-height: 26px;
     text-decoration:none;
-
     background: transparent;
     border: 0;
     width: 20px;
