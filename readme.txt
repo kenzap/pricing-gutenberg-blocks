@@ -3,7 +3,7 @@ Contributors: Kenzap
 Tags: pricing, tables
 Requires at least: 5.0
 Tested up to: 5.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Donate link: https://kenzap.com/wordpress-plugin-donation-page/
 Requires PHP: 5.6
 License: GPL2+
@@ -69,4 +69,6 @@ New: Initial release
 = v1.1.0 =
 New: Typography settings introduced
 Update: Stability improvement, crash fix
-Up
+
+= v1.1.1 =
+Update: vulnerability fix
